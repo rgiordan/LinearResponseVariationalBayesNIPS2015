@@ -1,0 +1,781 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Section
+Normal-Poisson Model
+\end_layout
+
+\begin_layout Standard
+Consider:
+\begin_inset Formula 
+\begin{eqnarray*}
+z_{i} & \sim & N\left(\mu,1\right)\\
+y_{i}\vert z_{i} & \sim & \textrm{Poisson}\left(\exp\left(z_{i}\right)\right)\\
+q\left(\mu\right) & = & N\left(m_{\mu},s_{\mu}^{2}\right)\\
+q\left(z_{i}\right) & = & N\left(m_{z_{i}},s_{z_{i}}^{2}\right)\\
+y_{i} & = & \textrm{observations},i\in\left\{ 1,...,n\right\} \\
+\mu & \sim & \textrm{Uniform prior}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The log likelihood is
+\begin_inset Formula 
+\begin{eqnarray*}
+\log P\left(y_{i},z_{i},\mu\right) & = & -\frac{1}{2}\left(z_{i}-\mu\right)^{2}-\exp\left(z_{i}\right)+z_{i}y_{i}+C\\
+ & = & -\frac{1}{2}z_{i}^{2}+z_{i}\mu+\mu^{2}-\exp\left(z_{i}\right)+z_{i}y_{i}+C
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The variational entropies are
+\begin_inset Formula 
+\begin{eqnarray*}
+H_{q}\left(z_{i}\right) & = & \frac{1}{2}\log\left(s_{z_{i}}^{2}\right)+C\\
+H_{q}\left(\mu\right) & = & \frac{1}{2}\log\left(s_{\mu}^{2}\right)+C
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The ELBO is then given by
+\begin_inset Formula 
+\begin{eqnarray*}
+ELBO\left(q\right) & = & \sum_{i=1}^{n}(-\frac{1}{2}E_{q}\left[z_{i}^{2}\right]+E_{q}\left[z_{i}\right]E_{q}\left[\mu\right]-\frac{1}{2}E_{q}\left[\mu^{2}\right]-\\
+ &  & E_{q}\left[\exp\left(z_{i}\right)\right]+E_{q}\left[z_{i}\right]y_{i}+\frac{1}{2}\log\left(s_{z_{i}}^{2}\right))+\frac{1}{2}\log\left(s_{\mu}^{2}\right)+C\\
+ & = & -\frac{1}{2}\sum_{i=1}^{n}s_{z_{i}}^{2}+m_{\mu}\sum_{i=1}^{n}m_{z_{i}}-\frac{n}{2}\left(s_{\mu}^{2}+m_{\mu}^{2}\right)-\\
+ &  & \sum_{i=1}^{n}\exp\left(m_{z_{i}}+\frac{1}{2}s_{z_{i}}^{2}\right)+\sum_{i=1}^{n}m_{z_{i}}y_{i}+\frac{1}{2}\log\left(s_{z_{i}}^{2}\right)+\frac{1}{2}\log\left(s_{\mu}^{2}\right)+C
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For 
+\begin_inset Formula $\mu$
+\end_inset
+
+, the updates are standard:
+\begin_inset Formula 
+\begin{eqnarray*}
+ELBO\left(q\left(\mu\right)\right) & = & m_{\mu}\sum_{i=1}^{n}m_{z_{i}}-\frac{n}{2}s_{\mu}^{2}+\frac{1}{2}\log\left(s_{\mu}^{2}\right)+C\\
+q\left(\mu\vert z\right) & = & \left(-\frac{1}{2}n\right)\mu^{2}+\left(\sum_{i=1}^{n}m_{z_{i}}\right)\mu
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For 
+\begin_inset Formula $z_{i}$
+\end_inset
+
+, there is a new term due to the non-conjugacy of the model.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+ELBO\left(q\left(z_{i}\right)\right) & = & -\frac{1}{2}s_{z_{i}}^{2}+m_{\mu}m_{z_{i}}-\exp\left(m_{z_{i}}+\frac{1}{2}s_{z_{i}}^{2}\right)+m_{z_{i}}y_{i}+\frac{1}{2}\log\left(s_{z_{i}}^{2}\right)+C\\
+ & = & -\frac{1}{2}\left(m_{z_{i}^{2}}-m_{z_{i}}^{2}\right)+m_{\mu}m_{z_{i}}-\exp\left(m_{z_{i}}+\frac{1}{2}\left(m_{z_{i}^{2}}-m_{z_{i}}^{2}\right)\right)+\\
+ &  & m_{z_{i}}y_{i}+\frac{1}{2}\log\left(m_{z_{i}^{2}}-m_{z_{i}}^{2}\right)+C
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where I have written the ELBO in terms of the mean parameters
+\begin_inset Formula 
+\begin{eqnarray*}
+m_{z_{i}^{2}} & = & E_{q}\left[z_{i}^{2}\right]\\
+m_{z_{i}} & = & E_{q}\left[z_{i}\right]
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The first order conditions are
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{\partial ELBO\left(q\left(z_{i}\right)\right)}{\partial m_{z_{i}}} & = & 0\Rightarrow\\
+m_{z_{i}}+m_{\mu}-\exp\left(m_{z_{i}}+\frac{1}{2}\left(m_{z_{i}^{2}}-m_{z_{i}}^{2}\right)\right)\left(1-m_{z_{i}}\right)+y_{i}-\left(m_{z_{i}^{2}}-m_{z_{i}}^{2}\right)^{-1}m_{z_{i}} & =\\
+\left(1+\exp\left(m_{z_{i}}+\frac{1}{2}\left(m_{z_{i}^{2}}-m_{z_{i}}^{2}\right)\right)-\left(m_{z_{i}^{2}}-m_{z_{i}}^{2}\right)^{-1}\right)m_{z_{i}} & = & \exp\left(m_{z_{i}}+\frac{1}{2}\left(m_{z_{i}^{2}}-m_{z_{i}}^{2}\right)\right)-m_{\mu}-y_{i}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+and
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{\partial ELBO\left(q\left(z_{i}\right)\right)}{\partial m_{z_{i}^{2}}} & = & 0\Rightarrow\\
+-\frac{1}{2}-\frac{1}{2}\exp\left(m_{z_{i}}+\frac{1}{2}\left(m_{z_{i}^{2}}-m_{z_{i}}^{2}\right)\right)+\frac{1}{2}\left(m_{z_{i}^{2}}-m_{z_{i}}^{2}\right)^{-1} & = & 0
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Dig that neither has the moment on one side without manipulation.
+\end_layout
+
+\begin_layout Standard
+However, in light of the stuff below, you only need to worry about the inverse
+ of the hessian of the elbo.
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{\partial^{2}E}{\partial m\partial m^{T}} & = & E_{mm}\\
+ & = & \left(\begin{array}{cc}
+E_{\mu\mu} & E_{\mu z}\\
+E_{z\mu} & E_{zz}
+\end{array}\right)\\
+\Sigma_{\mu} & = & \left(E^{-1}\right)_{\mu\mu}\\
+ & = & \left(E_{\mu\mu}-E_{\mu z}E_{zz}^{-1}E_{z\mu}\right)^{-1}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Generic LRVB Correction
+\end_layout
+
+\begin_layout Standard
+Is it vacuous to add and subtract a moment from each side? It is not.
+ Suppose the variational moment parameters satisfy a fixed point equation
+ 
+\begin_inset Formula $M\left(m\right)=0$
+\end_inset
+
+.
+ (Now a different 
+\begin_inset Formula $M$
+\end_inset
+
+ than the LRVB paper.) We then have: 
+\begin_inset Formula 
+\begin{eqnarray*}
+0 & = & M\left(m\right)\\
+m & = & M\left(m\right)+m\\
+\frac{dm}{dt^{T}} & = & \left(\frac{\partial M}{\partial m^{T}}+I\right)\frac{dm}{dt^{T}}+\frac{\partial M}{\partial t^{T}}\\
+\left(I-\frac{\partial M}{\partial m^{T}}-I\right)^{-1}\frac{dm}{dt} & = & \frac{\partial M}{\partial t^{T}}\\
+\frac{dm}{dt^{T}} & = & -\left(\frac{\partial M}{\partial m}\right)^{-1}\frac{\partial M}{\partial t^{T}}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If the ELBO is 
+\begin_inset Formula $E$
+\end_inset
+
+, dig that the first order conditions for maximization are
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{\partial E}{\partial m} & = & 0\\
+M & = & \frac{\partial E}{\partial m}\Rightarrow\\
+\frac{dm}{dt^{T}} & = & -\left(\frac{\partial^{2}E}{\partial m\partial m^{T}}\right)^{-1}\frac{\partial^{2}E}{\partial m\partial t^{T}}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It is not hard to just write the ELBO in terms of 
+\begin_inset Formula $m$
+\end_inset
+
+ and 
+\begin_inset Formula $t$
+\end_inset
+
+ and let autodifferentiation software do the work.
+\end_layout
+
+\begin_layout Standard
+You can also write the ordinary LRVB correction in these terms if you have
+ an exponential familiy.
+ Dig that
+\begin_inset Formula 
+\begin{eqnarray*}
+E & = & L+H+t^{T}m\\
+\frac{\partial E}{\partial m^{T}} & = & \frac{\partial L}{\partial\theta^{T}}\frac{\partial\theta}{\partial m^{T}}+\frac{\partial H}{\partial\theta^{T}}\frac{\partial\theta}{\partial m^{T}}+\frac{\partial H}{\partial m^{T}}+t
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Recall that
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{\partial A}{\partial\theta} & = & m\\
+\frac{\partial^{2}A}{\partial\theta\partial\theta^{T}} & = & \frac{\partial m}{\partial\theta^{T}}=V\Rightarrow\\
+\frac{\partial\theta}{\partial m^{T}} & = & V^{-1}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Also,
+\begin_inset Formula 
+\begin{eqnarray*}
+H & = & -E_{q}\left[\log q\left(X\right)\right]\\
+ & = & -E_{q}\left[\theta^{T}X-A\left(\theta\right)\right]+C\\
+ & = & -\theta^{T}m+A\left(\theta\right)+C
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+So that
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{\partial H}{\partial\theta} & = & -m+\frac{\partial A}{\partial\theta}=0\\
+\frac{\partial H}{\partial m} & = & -\theta\\
+\frac{\partial H}{\partial\theta^{T}}\frac{\partial\theta}{\partial m^{T}}+\frac{\partial H}{\partial m^{T}} & = & -\theta\\
+\frac{\partial^{2}H}{\partial m\partial m^{T}} & = & \frac{\partial}{\partial m}\left(\frac{\partial H}{\partial\theta^{T}}\frac{\partial\theta}{\partial m^{T}}+\frac{\partial H}{\partial m^{T}}\right)\\
+ & = & -\frac{\partial}{\partial m}\left(\theta\right)\\
+ & = & -V^{-1}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Putting this together,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{\partial^{2}E}{\partial m\partial m^{T}} & = & \frac{\partial^{2}L}{\partial m\partial m^{T}}-V^{-1}\\
+\frac{\partial^{2}E}{\partial m\partial t^{T}} & = & I
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+And so
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{dm}{dt^{T}}=-\left(\frac{\partial^{2}E}{\partial m\partial m^{T}}\right)^{-1}\frac{\partial^{2}E}{\partial m\partial t^{T}} & = & \left(V^{-1}-\frac{\partial^{2}L}{\partial m\partial m^{T}}\right)^{-1}\\
+ & = & \left(V^{-1}\left(I-V\frac{\partial^{2}L}{\partial m\partial m^{T}}\right)\right)^{-1}\\
+ & = & \left(I-V\frac{\partial^{2}L}{\partial m\partial m^{T}}\right)^{-1}V
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+...which is the ordinary LRVB correction.
+\end_layout
+
+\begin_layout Section
+Poisson Regression
+\end_layout
+
+\begin_layout Standard
+Just add linear regression:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\beta & \sim & N\left(\mu_{\beta},\Sigma_{\beta}\right)\textrm{ (known prior)}\\
+\beta & \in & \mathbb{R}^{k}\\
+y_{i}\vert\beta_{i} & \sim & \textrm{Poisson}\left(\exp\left(\beta^{T}x_{i}\right)\right)\\
+q\left(\beta\right) & = & N\left(m_{\beta},S_{\beta}\right)\\
+y_{i} & = & \textrm{observations},i\in\left\{ 1,...,n\right\} \\
+\mu & \sim & \textrm{Uniform prior}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The log likelihood is
+\begin_inset Formula 
+\begin{eqnarray*}
+\log P\left(y_{i},z_{i},\mu,\beta\right) & = & -\frac{1}{2}\left(\beta-\mu_{\beta}\right)^{T}\Sigma_{\beta}^{-1}\left(\beta-\mu_{\beta}\right)-\exp\left(\beta^{T}x_{i}\right)+\beta^{T}x_{i}y_{i}+C\\
+ & = & -\frac{1}{2}\beta\Sigma_{\beta}^{-1}\beta+\mu_{\beta}^{T}\Sigma_{\beta}^{T}\beta-\exp\left(\beta^{T}x_{i}\right)+\beta^{T}x_{i}y_{i}+C
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The variational entropy is
+\begin_inset Formula 
+\begin{eqnarray*}
+H_{q}\left(\beta\right) & = & \frac{1}{2}\log\left|S_{\beta}\right|+C
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This is a pain in the butt, though.
+ Maybe we can add an auxiliary variable with an additional variational distribut
+ion:
+\begin_inset Formula 
+\begin{eqnarray*}
+P\left(z_{i}\vert\beta\right) & = & \lim_{\epsilon\rightarrow0}N\left(\beta^{T}x_{i},\epsilon^{2}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The true 
+\begin_inset Formula $\epsilon=0$
+\end_inset
+
+, and of course it is not independent of 
+\begin_inset Formula $\beta$
+\end_inset
+
+.
+ The log likelihood would then be
+\begin_inset Formula 
+\begin{eqnarray*}
+\log P\left(y_{i},z_{i},\mu,\beta\right) & = & -\frac{1}{2}\left(\beta-\mu_{\beta}\right)^{T}\Sigma_{\beta}^{-1}\left(\beta-\mu_{\beta}\right)\\
+ &  & -\frac{1}{2\epsilon^{2}}\left(z_{i}-\beta^{T}x_{i}\right)^{2}\\
+ &  & \exp\left(\beta^{T}x_{i}\right)+\beta^{T}x_{i}y_{i}+C
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This is a neat idea but also something new-ish to look into.
+\end_layout
+
+\begin_layout Standard
+Note that the log determinant function is not easily expressible in JuMP
+ and perhaps must be implemented by hand.
+ However, we can use the above formulas:
+\begin_inset Formula 
+\begin{eqnarray*}
+E & = & L+H_{\beta}+H_{z}\\
+\frac{\partial^{2}E}{\partial m\partial m^{T}} & = & \frac{\partial^{2}L}{\partial m\partial m^{T}}+\frac{\partial^{2}H_{\beta}}{\partial m\partial m^{T}}+\frac{\partial^{2}H_{z}}{\partial m\partial m^{T}}\\
+ & = & \frac{\partial^{2}L}{\partial m\partial m^{T}}+V_{\beta}^{-1}+V_{z}^{-1}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Here, it's understood that 
+\begin_inset Formula $V_{\beta}^{-1}$
+\end_inset
+
+ is zeros everywhere except in the 
+\begin_inset Formula $\beta$
+\end_inset
+
+ rows, where is the block inverse of the 
+\begin_inset Formula $\beta$
+\end_inset
+
+ variance, similarly for 
+\begin_inset Formula $z$
+\end_inset
+
+.
+ As such, we can write
+\begin_inset Formula 
+\begin{eqnarray*}
+V_{\beta}^{-1}+V_{z}^{-1} & = & V^{-1}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+So 
+\begin_inset Formula 
+\begin{eqnarray*}
+E & = & L+H_{\beta}+H_{z}\\
+\hat{\Sigma} & = & \left(V^{-1}-\frac{\partial^{2}L}{\partial m\partial m^{T}}\right)^{-1}\\
+ & = & \left(I-V\frac{\partial^{2}L}{\partial m\partial m^{T}}\right)^{-1}V
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Consequently, it's only really necessary to differentiate the log likelihood.
+\end_layout
+
+\begin_layout Section
+IPOPT Version
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\log P\left(y_{i},z_{i},\mu,\beta\right) & = & -\frac{1}{2}\left(\beta-\mu_{\beta}\right)^{T}\Sigma_{\beta}^{-1}\left(\beta-\mu_{\beta}\right)\\
+ &  & -\frac{1}{2\epsilon^{2}}\left(z_{i}-\beta^{T}x_{i}\right)^{2}\\
+ &  & \exp\left(\beta^{T}x_{i}\right)+\beta^{T}x_{i}y_{i}+C
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Our variational distributions are
+\begin_inset Formula 
+\begin{eqnarray*}
+q\left(\beta\right) & = & N\left(m_{\beta},V_{\beta}\right)\\
+q\left(z_{i}\vert\beta\right) & = & N\left(m_{z_{i}}+\beta^{T}x_{i},v_{z_{i}}\right)\\
+E_{q}\left(z_{i}\vert\beta\right) & = & m_{z_{i}}+\beta^{T}x_{i}\\
+E_{q}\left(z_{i}\right) & = & m_{z_{i}}+m_{z}^{T}x_{i}\\
+Var_{q}\left(z_{i}\vert\beta\right) & = & v_{z_{i}}\\
+Var_{q}\left(z_{i}\right) & = & E_{q}\left[Var_{q}\left(z_{i}\vert\beta\right)\right]+Var_{q}\left[E\left(z_{i}\vert\beta\right)\right]\\
+ & = & v_{z_{i}}+x_{i}^{T}Var_{q}\left(\beta\right)x_{i}\\
+ & = & v_{z_{i}}+\textrm{trace}\left(V_{\beta}x_{i}x_{i}^{T}\right)\\
+\epsilon & \rightarrow & 0
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Because of the conditional variational distribution, the expectations in
+ the likelihood no longer factorize:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\log P\left(y_{i},z_{i},\mu,\beta\right) & = & -\frac{1}{2\epsilon}\left(z_{i}-\beta^{T}x_{i}\right)^{2}-\exp\left(z\right)+zy_{i}+C\\
+ & = & -\frac{1}{2\epsilon}z_{i}^{2}+\frac{1}{\epsilon}z_{i}\beta^{T}x_{i}-\frac{1}{2\epsilon}\textrm{trace}\left(\beta\beta^{T}x_{i}x_{i}^{T}\right)-\exp\left(z\right)+zy_{i}+C
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+and the ELBO has the extra mixed term:
+\begin_inset Formula 
+\begin{eqnarray*}
+E_{q}\left[z_{i}\beta^{T}x_{i}\right] & = & E_{q}\left[E_{q}\left[z_{i}\vert\beta\right]\beta^{T}x_{i}\right]\\
+ & = & E_{q}\left[E_{q}\left[m_{z}+\beta^{T}x_{i}\right]\beta^{T}x_{i}\right]\\
+ & = & m_{z}E_{q}\left[\beta^{T}\right]x_{i}+\textrm{trace}\left(E_{q}\left[\beta\beta^{T}\right]x_{i}x_{i}^{T}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Plugging this in (and taking the other expectations,
+\begin_inset Formula 
+\begin{eqnarray*}
+E_{q}\left[\log P\left(y_{i},z_{i},\mu,\beta\right)\right] & = & -\frac{1}{2\epsilon}E_{q}\left[z_{i}^{2}\right]+\frac{1}{\epsilon}m_{z}E_{q}\left[\beta^{T}\right]x_{i}+\\
+ &  & \frac{1}{\epsilon}\textrm{trace}\left(E_{q}\left[\beta\beta^{T}\right]x_{i}x_{i}^{T}\right)-\frac{1}{2\epsilon}\textrm{trace}\left(E_{q}\left[\beta\beta^{T}\right]x_{i}x_{i}^{T}\right)-\\
+ &  & E_{q}\left[\exp\left(z\right)\right]+E_{q}\left[z\right]y_{i}+C\\
+ & = & -\frac{1}{2\epsilon}E_{q}\left[z_{i}^{2}\right]+\frac{1}{\epsilon}m_{z}E_{q}\left[\beta^{T}\right]x_{i}+\frac{1}{2\epsilon}\textrm{trace}\left(E_{q}\left[\beta\beta^{T}\right]x_{i}x_{i}^{T}\right)-E_{q}\left[\exp\left(z\right)\right]+E_{q}\left[z\right]y_{i}+C
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The entropy is of the conditional variances:
+\begin_inset Formula 
+\begin{eqnarray*}
+E_{q}\left[\log P\left(q\right)\right] & = & E_{q}\left[\log P\left(z\vert\beta\right)P\left(\beta\right)\right]\\
+ & = & E_{q}\left[\log P\left(z\vert\beta\right)\right]+E_{q}\left[\log P\left(\beta\right)\right]
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Without the conditional distribution for 
+\begin_inset Formula $z$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\log P\left(y_{i},z_{i},\mu,\beta\right) & = & -\frac{1}{2}\left(\beta-\mu_{\beta}\right)^{T}\Sigma_{\beta}^{-1}\left(\beta-\mu_{\beta}\right)\\
+ &  & -\frac{1}{2\epsilon^{2}}\left(z_{i}-\beta^{T}x_{i}\right)^{2}\\
+ &  & \exp\left(\beta^{T}x_{i}\right)+\beta^{T}x_{i}y_{i}+C
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Our variational distributions are
+\begin_inset Formula 
+\begin{eqnarray*}
+q\left(\beta\right) & = & N\left(m_{\beta},V_{\beta}\right)\\
+q\left(z_{i}\right) & = & N\left(m_{z_{i}},v_{z_{i}}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Because of the conditional variational distribution, the expectations in
+ the likelihood no longer factorize:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\log P\left(y_{i},z_{i},\mu,\beta\right) & = & -\frac{1}{2\epsilon}\left(z_{i}-\beta^{T}x_{i}\right)^{2}-\exp\left(z\right)+zy_{i}+C\\
+ & = & -\frac{1}{2\epsilon}z_{i}^{2}+\frac{1}{\epsilon}z_{i}\beta^{T}x_{i}-\frac{1}{2\epsilon}\textrm{trace}\left(\beta\beta^{T}x_{i}x_{i}^{T}\right)-\exp\left(z\right)+zy_{i}+C
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Written with a scalar regressor like the paper
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\log P\left(y_{i},z_{i},m_{\mu},\mu\right) & = & -\frac{1}{2}t_{p}\mu^{2}-\frac{1}{2}\tau\left(z_{i}-\mu x_{i}\right)^{2}-\exp\left(z_{i}\right)+z_{i}y_{i}+C\\
+ & = & -\frac{1}{2}t_{p}\mu^{2}-\frac{1}{2}\tau\left(z_{i}^{2}-2z_{i}\mu x_{i}+\mu^{2}x_{i}^{2}\right)-\exp\left(z_{i}\right)+z_{i}y_{i}+C
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Our variational distributions are
+\begin_inset Formula 
+\begin{eqnarray*}
+q\left(\mu\right) & = & N\left(m_{\mu},v_{\mu}\right)\\
+q\left(z_{i}\right) & = & N\left(m_{z_{i}},v_{z_{i}}\right)\\
+q\left(\tau\right) & = & \Gamma\left(a_{\tau},b_{\tau}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We can add priors with
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\log P\left(y_{i},z_{i},m_{\mu},\mu\right) & = & -\frac{1}{2}t_{p}\mu^{2}-\frac{1}{2}\tau\left(z_{i}-\mu x_{i}\right)^{2}-\exp\left(z_{i}\right)+z_{i}y_{i}+C\\
+ & = & -\frac{1}{2}t_{p}\mu^{2}-\frac{1}{2}\tau\left(z_{i}^{2}-2z_{i}\mu x_{i}+\mu^{2}x_{i}^{2}\right)-\exp\left(z_{i}\right)+z_{i}y_{i}+C
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Actually for the paper:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\log p\left(y_{n}\vert z_{n},\beta,\tau\right) & = & -\exp\left(z_{n}\right)+z_{n}y_{n}+C\\
+\log p\left(y,z,\beta,\tau\right) & = & -\frac{\tau}{2}\sum_{n=1}^{N}\left[\left(z_{n}-\beta x_{n}\right)^{2}-\exp\left(z_{n}\right)+z_{n}y_{n}\right]+-\frac{1}{2}t_{p}\mu^{2}+C\\
+ & = & -\frac{1}{2}t_{p}\mu^{2}-\frac{1}{2}\tau\left(z_{i}^{2}-2z_{i}\mu x_{i}+\mu^{2}x_{i}^{2}\right)-\exp\left(z_{i}\right)+z_{i}y_{i}+C
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+With an offset
+\end_layout
+
+\begin_layout Standard
+Haste makes waste.
+ In the special case that 
+\begin_inset Formula $x_{i}=\left(\tilde{x}_{i},1\right)$
+\end_inset
+
+, we can write
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\log P\left(y_{i},z_{i},\mu,\beta\right) & = & -\frac{1}{2\epsilon}\left(z_{i}-\beta^{T}x_{i}\right)^{2}-\exp\left(z\right)+zy_{i}+C\\
+ & = & -\frac{1}{2\epsilon}z_{i}^{2}+\frac{1}{\epsilon}z_{i}\beta^{T}x_{i}-\frac{1}{2\epsilon}\textrm{trace}\left(\beta\beta^{T}x_{i}x_{i}^{T}\right)-\exp\left(z\right)+zy_{i}+C
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

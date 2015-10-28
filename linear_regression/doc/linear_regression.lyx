@@ -1,0 +1,494 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Section
+Linear Regression
+\end_layout
+
+\begin_layout Standard
+Just add linear regression:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\beta & \sim & N\left(\mu_{\beta},\Sigma_{\beta}\right)\textrm{ (known prior)}\\
+\beta & \in & \mathbb{R}^{k}\\
+y_{i}\vert\beta & \sim & N\left(\beta^{T}x_{i},\sigma^{2}\right)\\
+\tau:=\sigma^{-2} & \sim & Gamma\left(\alpha_{\tau},\gamma_{\tau}\right)\textrm{ (known prior)}\\
+q\left(\beta\right) & = & N\left(m_{\beta},S_{\beta}\right)\\
+q\left(\tau\right) & = & Gamma\left(a_{\tau},g_{\tau}\right)\\
+E_{q}\left(\tau\right) & = & \alpha_{\tau}\gamma_{\tau}\\
+y_{i} & = & \textrm{observations},i\in\left\{ 1,...,n\right\} 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The log likelihood is
+\begin_inset Formula 
+\begin{eqnarray*}
+\log P\left(y_{i},\tau,\beta\right) & = & -\frac{\tau}{2}\left(y_{i}-\beta^{T}x_{i}\right)^{2}+\frac{1}{2}\log\tau+\\
+ &  & \left(\alpha_{\tau}-1\right)\log\tau-\gamma_{\tau}\tau-\frac{1}{2}\left(\beta-\mu_{\beta}\right)^{T}\Sigma_{\beta}^{-1}\left(\beta-\mu_{\beta}\right)+C\\
+ & = & \tau y_{i}\beta^{T}x_{i}-\frac{1}{2}\tau x_{i}^{T}\beta\beta^{T}x_{i}+\frac{1}{2}\log\tau+\\
+ &  & \left(\alpha_{\tau}-1\right)\log\tau-\gamma_{\tau}\tau-\frac{1}{2}\textrm{tr}\left(\Sigma_{\beta}^{-1}\beta^{T}\beta\right)+\textrm{tr}\left(\Sigma_{\beta}^{-1}\mu_{\beta}^{T}\beta\right)\\
+\log P\left(y_{i},\tau,\beta\right) & = & \tau\beta^{T}\sum_{i}y_{i}x_{i}-\frac{1}{2}\tau\textrm{tr}\left(\sum_{i}x_{i}x_{i}^{T}\beta\beta^{T}\right)+\frac{n}{2}\log\tau+\\
+ &  & \left(\alpha_{\tau}-1\right)\log\tau-\gamma_{\tau}\tau-\frac{1}{2}\textrm{tr}\left(\Sigma_{\beta}^{-1}\beta^{T}\beta\right)+\textrm{tr}\left(\Sigma_{\beta}^{-1}\mu_{\beta}^{T}\beta\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The variational entropy is
+\begin_inset Formula 
+\begin{eqnarray*}
+H_{q}\left(\beta\right) & = & \frac{1}{2}\log\left|S_{\beta}\right|+C\\
+H_{q}\left(\tau\right) & = & a_{\tau}-\log g_{\tau}+\log\Gamma\left(a_{\tau}\right)+\left(1-a_{\tau}\right)\psi\left(a_{\tau}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Now, the problem with this is that if you can invert the log likelihood
+ Hessian than you can get the OLS solution and its covariance.
+ So if you can do LRVB there is never going to be a reason to do VB.
+\end_layout
+
+\begin_layout Section
+Random Effects
+\end_layout
+
+\begin_layout Standard
+I think there is a reason to do a random effects model, though.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\beta & \sim & N\left(\mu_{\beta},\Sigma_{\beta}\right)\textrm{ (known prior)}\\
+\beta & \in & \mathbb{R}^{k}\\
+\gamma_{i} & \sim & N\left(\mu,\Sigma\right)\textrm{ (unknown)}\\
+\mu & \sim & N\left(\mu_{\mu},\Sigma_{\mu}\right)\textrm{ (known prior)}\\
+\Sigma^{-1} & \sim & Wishart\textrm{ (known prior)}\\
+y_{i}\vert\beta,\gamma_{i} & \sim & N\left(\beta^{T}x_{i}+\gamma_{i}^{T}z_{i},\sigma^{2}\right)\\
+\tau:=\sigma^{-2} & \sim & Gamma\left(\alpha_{\tau},\gamma_{\tau}\right)\textrm{ (known prior)}\\
+q\left(\beta\right) & = & N\left(m_{\beta},S_{\beta}\right)\\
+q\left(\gamma_{i}\right) & = & N\left(m_{\gamma_{i}},S_{\gamma_{i}}\right)\\
+q\left(\mu\right) & = & N\left(m_{\mu},S_{\mu}\right)\\
+q\left(\Sigma\right) & = & Wishart(k,V)\\
+q\left(\tau\right) & = & Gamma\left(a_{\tau},g_{\tau}\right)\\
+E_{q}\left(\tau\right) & = & \alpha_{\tau}\gamma_{\tau}\\
+y_{i} & = & \textrm{observations},i\in\left\{ 1,...,n\right\} 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The log likelihood is
+\begin_inset Formula 
+\begin{eqnarray*}
+\log P\left(y_{i},\tau,\beta,\gamma_{i},\mu,\Sigma\right) & = & -\frac{\tau}{2}\left(y_{i}-\beta^{T}x_{i}-\gamma_{i}^{T}z_{i}\right)^{2}+\frac{1}{2}\log\tau+\\
+ &  & -\frac{1}{2}\left(\gamma_{i}-\mu\right)^{T}\Sigma^{-1}\left(\gamma_{i}-\mu\right)+\frac{1}{2}\log\left|\Sigma^{-1}\right|+\\
+ &  & \textrm{Priors}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For expediency, we may want to implement a scalar random effect first, in
+ which case we have
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\beta & \sim & N\left(\mu_{\beta},\Sigma_{\beta}\right)\textrm{ (known prior)}\\
+\beta & \in & \mathbb{R}^{k}\\
+\gamma_{i} & \sim & N\left(\mu,\nu^{-1}\right)\textrm{ (unknown)}\\
+\mu & \sim & N\left(\mu_{\mu},\Sigma_{\mu}\right)\textrm{ (known prior)}\\
+\nu & \sim & Gamma\left(\alpha_{\nu},\gamma_{\nu}\right)\textrm{ (known prior)}\\
+y_{i}\vert\beta,\gamma_{i} & \sim & N\left(\beta^{T}x_{i}+\gamma_{i}z_{i},\sigma^{2}\right)\\
+\tau:=\sigma^{-2} & \sim & Gamma\left(\alpha_{\tau},\gamma_{\tau}\right)\textrm{ (known prior)}\\
+q\left(\beta\right) & = & N\left(m_{\beta},S_{\beta}\right)\\
+q\left(\gamma_{i}\right) & = & N\left(m_{\gamma_{i}},S_{\gamma_{i}}\right)\\
+q\left(\mu\right) & = & N\left(m_{\mu},S_{\mu}\right)\\
+q\left(\Sigma\right) & = & Gamma(a_{\nu},g_{\nu})\\
+q\left(\tau\right) & = & Gamma\left(a_{\tau},g_{\tau}\right)\\
+E_{q}\left(\tau\right) & = & \alpha_{\tau}\gamma_{\tau}\\
+y_{i} & = & \textrm{observations},i\in\left\{ 1,...,n\right\} 
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\log P\left(y_{i},\tau,\beta,\gamma_{i},\mu,\Sigma\right) & = & -\frac{\tau}{2}\left(y_{i}-\beta^{T}x_{i}-\gamma_{i}z_{i}\right)^{2}+\frac{1}{2}\log\tau+\\
+ &  & -\frac{\nu}{2}\left(\gamma_{i}-\mu\right)^{2}+\frac{1}{2}\log\nu+\textrm{Priors}\\
+ & = & -\frac{1}{2}\tau\left(y_{i}^{2}-2y_{i}\left(\beta^{T}x_{i}+\gamma_{i}z_{i}\right)+\left(\beta^{T}x_{i}+\gamma_{i}z_{i}\right)^{2}\right)\\
+ &  & -\frac{1}{2}\nu\left(\gamma_{i}^{2}-2\gamma_{i}\mu+\mu^{2}\right)+\frac{1}{2}\log\tau+\frac{1}{2}\log\nu+\textrm{Priors}\\
+ & = & -\frac{1}{2}\tau\left(y_{i}^{2}-2y_{i}\beta^{T}x_{i}-2y_{i}\gamma_{i}z_{i}+\textrm{trace}\left(\beta\beta^{T}x_{i}x_{i}^{T}\right)+2\gamma_{i}\beta^{T}x_{i}z_{i}+\gamma_{i}^{2}z_{i}^{2}\right)\\
+ &  & -\frac{1}{2}\nu\left(\gamma_{i}^{2}-2\gamma_{i}\mu+\mu^{2}\right)+\frac{1}{2}\log\tau+\frac{1}{2}\log\nu+\textrm{Priors}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In fact, though, I think I might just want to estimate a diagonal covariance
+ matrix? That way I don't have to undo a lot of the work I've already done
+ in the code.
+ Then you have
+\begin_inset Formula 
+\begin{eqnarray*}
+\log P\left(y_{i},\tau,\beta,\gamma_{i},\mu,\Sigma\right) & = & -\frac{1}{2}\tau\left(y_{i}^{2}-2y_{i}x_{i}^{T}\beta-2y_{i}z_{i}^{T}\gamma_{i}+\textrm{trace}\left(\beta\beta^{T}x_{i}x_{i}^{T}\right)+2\textrm{trace}\left(z_{i}x_{i}^{T}\beta\gamma_{i}^{T}\right)+\textrm{trace}\left(\gamma_{i}\gamma_{i}^{T}z_{i}z_{i}^{T}\right)\right)\\
+ &  & -\frac{1}{2}\nu\left(\gamma_{i}^{T}\gamma_{i}-2\gamma_{i}^{T}\mu+\mu^{T}\mu\right)+\frac{1}{2}\log\tau+\frac{1}{2}\log\nu+\textrm{Priors}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Then the first term is exactly what we'd have in a linear regression with
+ the appropriate design matrix.
+ Only the second term is different.
+\end_layout
+
+\begin_layout Section
+Random Effects for NIPS
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\gauss}{\mathcal{N}}
+{\mathcal{N}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\indep}{\stackrel{indep}{\sim}}
+{\stackrel{indep}{\sim}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\iid}{\stackrel{iid}{\sim}}
+{\stackrel{iid}{\sim}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\constant}{C}
+{C}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\mbeq}{\mathbb{E}_{q}}
+{\mathbb{E}_{q}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+y_{n}\vert\beta,z,\tau & \indep & \gauss\left(\beta^{T}x_{n}+r_{n}z_{k\left(n\right)},\tau^{-1}\right)\\
+z_{k}\vert\nu & \iid & \gauss\left(0,\nu^{-1}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+With the priors:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\beta & \sim & \gauss\left(0,\Sigma_{\beta}\right)\in\mathbb{R}^{k}\\
+\nu & \sim & \Gamma\left(\alpha_{\nu},\beta_{\nu}\right)\\
+\tau & \sim & \Gamma\left(\alpha_{\tau},\beta_{\tau}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We will make the following mean field assumption:
+\begin_inset Formula 
+\begin{eqnarray*}
+q\left(\beta,z,\tau,\nu\right) & = & q\left(\nu\right)q\left(\tau\right)q\left(\beta\right)\prod_{k=1}^{K}q\left(z_{k}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We have 
+\begin_inset Formula $n\in\left\{ 1,...,N\right\} $
+\end_inset
+
+, and 
+\begin_inset Formula $k\in\left\{ 1,...,K\right\} $
+\end_inset
+
+, and 
+\begin_inset Formula $k\left(n\right)$
+\end_inset
+
+ matches an observation 
+\begin_inset Formula $n$
+\end_inset
+
+ to a random effect 
+\begin_inset Formula $k$
+\end_inset
+
+, allowing repeated observations of a random effect.
+ The full joint log likelihood is:
+\begin_inset Formula 
+\begin{eqnarray*}
+\log p\left(y_{n}\vert z_{k\left(n\right)},\tau,\beta\right) & = & -\frac{\tau}{2}\left(y_{n}-\beta^{T}x_{n}-r_{n}z_{k\left(n\right)}\right)^{2}+\frac{1}{2}\log\tau+\constant\\
+\log p\left(z_{k}\vert\nu\right) & = & -\frac{\nu}{2}z_{k}^{2}+\frac{1}{2}\log\nu+\constant\\
+\log p\left(\beta\right) &  & -\frac{1}{2}\textrm{trace}\left(\Sigma_{\beta}^{-1}\beta\beta^{T}\right)+\constant\\
+\log p\left(\tau\right) & = & \left(\alpha_{\tau}-1\right)\log\tau-\beta_{\tau}\tau+\constant\\
+\log p\left(\nu\right) & = & \left(\alpha_{\nu}-1\right)\log\nu-\beta_{\nu}\nu+\constant\\
+\log p\left(y,\tau,\beta,z\right) & = & \sum_{n=1}^{N}\log p\left(y_{n}\vert z_{k\left(n\right)},\tau,\beta\right)+\sum_{k=1}^{K}\log p\left(z_{k}\vert\nu\right)+\\
+ &  & \log p\left(\beta\right)+\log p\left(\nu\right)+\log p\left(\tau\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Expanding the first term of the conditional likelihood of 
+\begin_inset Formula $y_{n}$
+\end_inset
+
+ gives
+\begin_inset Formula 
+\begin{eqnarray*}
+-\frac{\tau}{2}\left(y_{n}-\beta^{T}x_{n}-r_{n}z_{k\left(n\right)}\right)^{2} & = & -\frac{\tau}{2}\left(y_{n}^{2}-2y_{n}x_{n}^{T}\beta-2y_{n}r_{n}z_{n\left(k\right)}+\textrm{trace}\left(x_{n}x_{n}^{T}\beta\beta^{T}\right)+r_{n}^{2}z_{k\left(n\right)}^{2}+2r_{n}x_{n}^{T}\beta z_{k\left(n\right)}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+By grouping terms, we can see that the mean parameters will be
+\begin_inset Formula 
+\begin{eqnarray*}
+q\left(\beta\right) & = & q\left(\beta;\mbeq\left[\beta\right],\mbeq\left[\beta\beta^{T}\right]\right)\\
+q\left(z_{k}\right) & = & q\left(z_{k};\mbeq\left[z_{k}\right],\mbeq\left[z_{k}^{2}\right]\right)\\
+q\left(\tau\right) & = & q\left(\tau;\mbeq\left[\tau\right],\mbeq\left[\log\tau\right]\right)\\
+q\left(\nu\right) & = & q\left(\nu;\mbeq\left[\nu\right],\mbeq\left[\log\nu\right]\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It follows that the optimal variational distributions are 
+\begin_inset Formula $q\left(\beta\right)=$
+\end_inset
+
+multivariate normal, 
+\begin_inset Formula $q\left(z_{k}\right)=$
+\end_inset
+
+univariate normal, and 
+\begin_inset Formula $q\left(\tau\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $q\left(\nu\right)$
+\end_inset
+
+ will be gamma.
+ We performed standard coordinate ascent on these distributions.
+ 
+\end_layout
+
+\begin_layout Standard
+As in REF, we implemented this model in autodifferentiation software.
+ This means conjugate coordinate updates were easy, since the natural parameters
+ corresponding to a mean parameters are the first derivatives of the log
+ likelihood with respect to the mean parameters.
+ For example, denoting the log likelihood at step 
+\begin_inset Formula $s$
+\end_inset
+
+ by 
+\begin_inset Formula $L_{s}$
+\end_inset
+
+, the update for 
+\begin_inset Formula $q_{s+1}\left(z_{k}\right)$
+\end_inset
+
+ will be:
+\begin_inset Formula 
+\begin{eqnarray*}
+\log q_{s+1}\left(z_{k}\right) & = & \frac{\partial\mbeq\left[L_{s}\right]}{\partial\mbeq\left[z_{k}\right]}z_{k}+\frac{\partial\mbeq\left[L_{s}\right]}{\partial\mbeq\left[z_{k}^{2}\right]}z_{k}^{2}+\constant
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Given the partial derivatives of 
+\begin_inset Formula $L_{s}$
+\end_inset
+
+ with respect to the mean parameters, the updated mean parameters for 
+\begin_inset Formula $z_{k}$
+\end_inset
+
+ can be read off directly using standard properties of the normal distribution.
+ 
+\end_layout
+
+\begin_layout Standard
+The variational covariance matrices are all standard.
+ We can see that 
+\begin_inset Formula $H$
+\end_inset
+
+ will have nonzero terms in general (for example, the three-way interaction
+ 
+\begin_inset Formula $\mbeq\left[\tau\right]\mbeq\left[z_{k\left(n\right)}\right]\mbeq\left[\beta\right]$
+\end_inset
+
+), and that LRVB will be different from MFVB.
+ As usual in our models, 
+\begin_inset Formula $H$
+\end_inset
+
+ is sparse, and we can easily apply the technique in section REF to get
+ the covariance matrix excluding the random effects, 
+\begin_inset Formula $z$
+\end_inset
+
+.
+\end_layout
+
+\end_body
+\end_document
