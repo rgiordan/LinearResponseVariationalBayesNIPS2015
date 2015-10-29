@@ -1,7 +1,7 @@
 using JuMP
 using ReverseDiffSparse
 using Ipopt
-using NLopt
+#using NLopt
 
 # For now, define a bunch of stuff in the global namespace.
 # This must be run after every redefinition of the model
@@ -42,7 +42,7 @@ m = Model(solver=IpoptSolver(max_iter=z_max_iter, tol=z_tol, print_level=0))
 # Define the elbo.  See notes.
 @defNLExpr(loglik_z,
 		   e_tau * (-0.5 * e_z2 +
-		            e_z * e_mu * x - 
+		            e_z * e_mu * x -
 		            0.5 * e_mu2 * (x ^ 2)) +
 		   0.5 * e_log_tau -
 		   e_exp_z + e_z * y);
@@ -155,7 +155,7 @@ function fit_model!(x_vec, y_vec,
 		if diff < tol
 			println("Convergence reached: $diff")
 			break
-		end	
+		end
 		println("$i: $diff")
 	end
 	e_mu_val, e_mu2_val, e_tau_val, e_log_tau_val, e_z_val, e_z2_val
