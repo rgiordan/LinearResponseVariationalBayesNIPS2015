@@ -172,7 +172,7 @@ GGPlotLegend <- function(a.gplot){
 }
 
 # Turn off caching if you need to regenerate any of the R code.
-opts_chunk$set(cache=TRUE)
+opts_chunk$set(cache=FALSE)
 @
 
 %%%%%%%%%%%%%%%%%
@@ -1106,11 +1106,11 @@ were estimated correctly by both and are not shown.
 <<scaling.data>>=
 # Load the scaling data.
 # TODO: Make sure it's clear how to generate this from the new repo.
-load("./data/scaling_simulation_more.Rdata")
-timing.melt <- timing.melt[!is.na(timing.melt$value), ]
+#load("./data/scaling_simulation_more.Rdata")
+#timing.melt <- timing.melt[!is.na(timing.melt$value), ]
 
-# TODO: Make sure the new filename works.
-#gmm.scaling.p <- read.csv("data/scaling_simulation_very_high_p.csv", header=T)
+load("./data/new_scaling_n.Rdata")
+gmm.scaling.n <- read.csv("data/new_scaling_n_results.csv", header=T)
 gmm.scaling.p <- read.csv("data/new_scaling_p_results.csv", header=T)
 @
 
@@ -1180,23 +1180,23 @@ often orders of magnitude faster.
 # Note that I just chose the intercepts for the y = ax lines by hand.
 method.vars <- c("lrvb", "gibbs.scaled")
 method.labels <- c("LRVB", "Gibbs")
-ggplot(filter(timing.melt, variable %in% method.vars, p == 3)) +
+ggplot(filter(gmm.scaling.n, variable %in% method.vars, p == 3)) +
   geom_point(aes(x=n, y=value, color=variable), size=3) +
   geom_line(aes(x=n, y=value, color=variable)) +
   scale_color_discrete(name="Method:", limits=method.vars,
                        labels=method.labels) +
   xlab("Number of data points (N)") + ylab("Running time (seconds)") +
-  scale_x_log10(breaks=unique(timing.melt$n)[c(1, 3, 5)]) + scale_y_log10() +
+  scale_x_log10(breaks=unique(gmm.scaling.n$n)[c(1, 3, 5)]) + scale_y_log10() +
   geom_abline(aes(intercept=log10(3.162278e-05), slope=1)) +
   theme(legend.position="top")
 
-ggplot(filter(timing.melt, variable == "lrvb", p == 3)) +
+ggplot(filter(gmm.scaling.n, variable == "lrvb", p == 3)) +
   geom_point(aes(x=n, y=value, color=variable), size=3) +
   geom_line(aes(x=n, y=value, color=variable)) +
   scale_color_discrete(name="Method:", limits=method.vars,
                        labels=method.labels) +
   xlab("Number of data points (N)") + ylab("Running time (seconds)") +
-  #scale_x_log10(breaks=unique(timing.melt$n)) + scale_y_log10() +
+  #scale_x_log10(breaks=unique(gmm.scaling.n$n)) + scale_y_log10() +
   scale_x_continuous()  +
   geom_abline(aes(intercept=0, slope=3.162278e-05)) +
   theme(legend.position="top")
