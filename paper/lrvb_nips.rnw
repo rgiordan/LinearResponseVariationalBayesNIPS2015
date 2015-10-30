@@ -327,7 +327,7 @@ condition for the optimality of $q^*$ becomes the fixed point equation
 \subsection{Linear Response}\label{sec:lr_subsection}
 %------------------------
 
-Let $\vbcov$ denote the mean vector and the covariance matrix of $\theta$ under
+Let $\vbcov$ denote the covariance matrix of $\theta$ under
 the variational distribution $q^{*}(\theta)$, and let $\truecov$ denote the
 covariance matrix of $\theta$ under the true posterior,
 %
@@ -337,15 +337,14 @@ $$
 \quad \quad
 \truecov := \cov_{p} \theta.
 $$
-In MFVB, $\vbcov$ may be a poor
-estimator of $\truecov$, even when $\mpopt \approx \mbe_{p} \theta$,
-i.e., when the marginal estimated means match well
-% \cite{mackay:2003:information, wang:2005:inadequacy, bishop:2006:pattern, rue:2009:approximate, turner:2011:two}.
- \cite{wang:2005:inadequacy, bishop:2006:pattern, turner:2011:two}. Our goal is
- to use the MFVB solution and linear response methods to construct an improved
- estimator for $\truecov$.  We will focus on the covariance of the natural
- $\theta$ for simplicity, though the covariance of smooth functions of $\theta$
- can be estimated similarly (\app{function_covariance}).
+%
+In MFVB, $\vbcov$ may be a poor estimator of $\truecov$, even when $\mpopt
+\approx \mbe_{p} \theta$, i.e., when the marginal estimated means match well
+\cite{wang:2005:inadequacy, bishop:2006:pattern, turner:2011:two}. Our goal is
+to use the MFVB solution and linear response methods to construct an improved
+estimator for $\truecov$.  We will focus on the covariance of the natural
+$\theta$ for simplicity, though the covariance of smooth functions of $\theta$
+can be estimated similarly (\app{function_covariance}).
 
 The essential idea of linear response is to perturb the first-order condition
 $M(\mpopt) = \mpopt$ around its optimum. In particular, define the distribution
@@ -433,7 +432,7 @@ with the frequentist ``supplemented expectation-maximization'' procedure see
 \begin{align}
   \nonumber
   \lrcov = -\left(\frac{\partial^2 L}{\partial m \partial m^T} + \frac{\partial^2 S}{\partial m \partial m^T}\right)^{-1}
-    &= (V^{-1} + H)^{-1}, \textrm{ for } H := \frac{\partial^2 L}{\partial m \partial m^T}.\\
+    &= (V^{-1} - H)^{-1}, \textrm{ for } H := \frac{\partial^2 L}{\partial m \partial m^T}.\\
   \label{eq:spec_lrvb}
   \textrm{I.e, } \lrcov &= (I - VH)^{-1} V.
 \end{align}
@@ -502,7 +501,7 @@ code is available on our
 \texttt{rgiordan/LinearResponseVariationalBayesNIPS2015}}.
 
 For each model, we simulate datasets with a range of parameters.  In the graphs,
-each point represents the outcome from a single simulation.  The horizotal axis
+each point represents the outcome from a single simulation.  The horizontal axis
 is always the result from an MCMC procedure, which we take as the ground truth.
 As discussed in \mysec{lr_subsection}, the accuracy of the LRVB covariance for a
 sufficient statistic depends on the approximation $\mpopt_t \approx \mbe_{p_t}

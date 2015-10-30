@@ -34,7 +34,6 @@ min.eff.sizes <-
   summarize(min.effsize=min(gibbs.effsize))
 
 analysis.metadata$min.effsize <- 500
-#analysis.metadata$min.effsize <- 750
 
 good.sims <- filter(min.eff.sizes, min.effsize > analysis.metadata$min.effsize)$sim
 analysis.metadata$good.sims  <- length(good.sims)
