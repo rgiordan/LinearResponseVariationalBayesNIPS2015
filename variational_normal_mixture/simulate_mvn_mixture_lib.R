@@ -22,6 +22,7 @@ DefaultPriors <- function(p, k, prior.obs=1, x.prior.scale=rep(10, p)) {
     # Seriously, R?  diag() of a single number is a 0x0 matrix.
     mu.prior.info.mat <- matrix(prior.obs / (x.prior.scale ^ 2))
   }
+  matrix.size <- (p * (p + 1)) / 2
   mu.prior.info <- matrix(ConvertSymmetricMatrixToVector(mu.prior.info.mat),
                           nrow=matrix.size, ncol=k)
   
