@@ -32,9 +32,9 @@ kShowPlots <- FALSE
 kSaveResults <- TRUE
 
 #######
-# Generate data
+# Generate data using one of two schemes.
 
-if (FALSE) {
+if (TRUE) {
   n.range <- 5000
   k.range <- 2
   reps <- 4
