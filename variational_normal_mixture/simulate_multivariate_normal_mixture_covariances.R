@@ -44,10 +44,6 @@ n.gibbs.draws <- 6e3
 vars.scale <- 0.5
 anisotropy <- 1
 
-p <- ncol(x)
-n <- nrow(x)
-matrix.size <- (p * (p + 1)) / 2
-
 priors <- DefaultPriors(p=p, k=k)
 
 #####################
