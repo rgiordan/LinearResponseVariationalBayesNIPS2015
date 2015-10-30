@@ -1,0 +1,9 @@
+base
+knitr
+dplyr
+reshape2
+ggplot2
+xtable
+gridExtra
+scales
+png

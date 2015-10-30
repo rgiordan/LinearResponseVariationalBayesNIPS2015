@@ -1,0 +1,1261 @@
+\documentclass{article} % For LaTeX2e
+
+% Set to togglefalse to use nips formatting.
+% Set to toggletrue to use arxiv formatting.
+\usepackage{etoolbox}
+\newtoggle{arxivformat}
+%\toggletrue{arxivformat}
+\togglefalse{arxivformat}
+
+\iftoggle{arxivformat} {
+  \usepackage{natbib}
+  \usepackage{times}
+}{
+  \usepackage{nips15submit_e,times}
+  \usepackage[sort&compress, numbers]{natbib}
+}
+
+\usepackage{hyperref}
+\usepackage{url}
+%\documentstyle[nips14submit_09,times,art10]{article} % For LaTeX 2.09
+
+\usepackage[margin=1.5in]{geometry}
+
+\usepackage{graphicx} % more modern
+\usepackage{subcaption}
+\usepackage{caption}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{appendix}
+
+% break equations across pages
+\allowdisplaybreaks
+
+% Used to number single equations in an equation array.
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+
+\usepackage{amssymb}
+\usepackage{bbm}
+
+% references
+\newcommand{\app}[1]{Appendix~\ref{app:#1}}
+\newcommand{\lem}[1]{Lemma~\ref{lem:#1}}
+\newcommand{\prop}[1]{Proposition~\ref{prop:#1}}
+\newcommand{\rem}[1]{Remark~\ref{rem:#1}}
+\newcommand{\mysec}[1]{Section~\ref{sec:#1}}
+\newcommand{\mysecs}[1]{Sections~\ref{sec:#1}}
+\newcommand{\mysecss}[1]{\ref{sec:#1}}
+\newcommand{\eq}[1]{Eq.~(\ref{eq:#1})}
+\newcommand{\eqs}[1]{Eqs.~(\ref{eq:#1})}
+\newcommand{\eqss}[1]{(\ref{eq:#1})}
+\newcommand{\eqw}[1]{Eq.~(#1)}
+\newcommand{\fig}[1]{Fig.~(\ref{fig:#1})}
+\newcommand{\figs}[1]{Figs.~(\ref{fig:#1})}
+\newcommand{\figss}[1]{(\ref{fig:#1})}
+
+% macros
+\newcommand{\npp}{\tilde{\eta}} % natural parameter for the p distribution
+\newcommand{\npq}{\eta} % natural parameter for the q distribution
+\newcommand{\mpp}{\tilde{m}} % mean parameter for the p distribution
+\newcommand{\mpq}{m} % mean parameter for the q distribution
+\newcommand{\mpopt}{m^*} % mean parameter for the q^* distribution
+\newcommand{\npopt}{\eta^*} % mean parameter for the q^* distribution
+\newcommand{\gauss}{\mathcal{N}} % Gaussian distribution
+\newcommand{\truecov}{\Sigma} % True posterior covariance
+\newcommand{\lrcov}{\hat{\Sigma}} % LR cov estimate
+\newcommand{\vbcov}{V} % Variational posterior covariance
+\newcommand{\constant}{C} % A constant
+\newcommand{\klshort}{E}
+
+% theorems
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{remark}[theorem]{Remark}
+
+% other macros
+\newcommand{\kl}{\textrm{KL}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\newcommand{\mbe}{\mathbb{E}}
+\newcommand{\mbeq}{\mathbb{E}_{q}}
+\newcommand{\var}{\textrm{Var}}
+\newcommand{\cov}{\textrm{Cov}}
+\newcommand{\iid}{\stackrel{iid}{\sim}}
+\newcommand{\indep}{\stackrel{indep}{\sim}}
+
+\title{Linear Response Methods for Accurate Covariance Estimates from
+       Mean Field Variational Bayes}
+
+% To keep the emails from being too big
+\usepackage[scaled=0.7]{beramono}
+
+% TODO: fix these citations.
+\author{
+Ryan Giordano\\
+%Department of Statistics\\
+UC Berkeley\\
+%Berkeley, CA 94720 \\
+\texttt{rgiordano@berkeley.edu}
+\and
+Tamara Broderick \\
+%Department of EECS\\
+MIT\\
+%Cambridge, MA 02139\\
+\texttt{tbroderick@csail.mit.edu}
+\and
+Michael Jordan \\
+%Department of EECS\\
+UC Berkeley\\
+%Berkeley, CA 94720 \\
+\texttt{jordan@cs.berkeley.edu}
+}
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+
+\nipsfinalcopy % Uncomment for camera-ready version
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Mean field variational Bayes (MFVB) is a popular posterior approximation
+method due to its fast runtime on large-scale data sets. However, it is well
+known that a major failing of MFVB is that it underestimates
+the uncertainty of model variables (sometimes severely)
+and provides no information about model variable covariance.
+%
+We generalize linear response methods from statistical physics
+to deliver accurate uncertainty estimates for model
+variables---both for individual variables and coherently across variables.
+We call our method \emph{linear response variational Bayes} (LRVB).
+When the MFVB posterior approximation is in the exponential family,
+LRVB has a simple, analytic form, even for
+non-conjugate models. Indeed, we make no assumptions about the form of the
+true posterior.
+%
+We demonstrate the accuracy and scalability of
+our method on a range of models for both simulated and real data.
+
+\end{abstract}
+
+<<initialization, echo=FALSE, message=FALSE>>=
+# Load libraries and set global knitr options.
+library(knitr)
+library(dplyr)
+library(reshape2)
+library(ggplot2)
+library(xtable)
+library(gridExtra)
+library(scales)
+library(png)
+
+opts_chunk$set(out.width="3in", out.height="3in", fig.width=4.5, fig.height=4.5)
+opts_chunk$set(fig.pos='ht!', fig.align='center', dev='png', dpi=300)
+opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE) #$
+
+# Set the default ggplot theme
+theme_set(theme_bw())
+
+# This helps not waste space on repeated legends.  Taken from
+# http://stackoverflow.com/questions/12539348/ggplot-separate-legend-and-plot
+GGPlotLegend <- function(a.gplot){
+  # Extract a legend from a ggplot object.
+  tmp <- ggplot_gtable(ggplot_build(a.gplot))
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend <- tmp$grobs[[leg]]
+  legend
+}
+
+# Turn off caching if you need to regenerate any of the R code.
+opts_chunk$set(cache=FALSE)
+@
+
+%%%%%%%%%%%%%%%%%
+
+%========================
+\section{Introduction}\label{sec:intro}
+%========================
+
+With increasingly efficient data collection methods, scientists are interested
+in quickly analyzing ever larger data sets. In particular, the promise of these
+large data sets is not simply to fit old models but instead to learn more
+nuanced patterns from data than has been possible in the past. In theory, the
+Bayesian paradigm yields exactly these desiderata. Hierarchical modeling allows
+practitioners to capture complex relationships between variables of interest.
+Moreover, Bayesian analysis allows practitioners to quantify the uncertainty in
+any model estimates---and to do so coherently across all of the model variables.
+
+\emph{Mean field variational Bayes} (MFVB), a method for approximating
+a Bayesian posterior distribution, has grown in
+popularity due to its fast runtime on large-scale data sets
+\cite{blei:2003:lda, blei:2006:dp, hoffman:2013:stochastic}.
+%\cite{blei:2006:dp, hoffman:2013:stochastic}.
+But it is well known that a major failing of MFVB is that it gives
+underestimates of the uncertainty of model variables that can be arbitrarily
+bad, even when approximating a simple multivariate Gaussian distribution
+\citep{mackay:2003:information,bishop:2006:pattern,turner:2011:two}.
+%\citep{bishop:2006:pattern,turner:2011:two}.
+And MFVB provides no information about how
+the uncertainties in different model variables interact
+\cite{wang:2005:inadequacy, bishop:2006:pattern, rue:2009:approximate, turner:2011:two}.
+%\cite{wang:2005:inadequacy, bishop:2006:pattern, turner:2011:two}.
+
+By generalizing linear response methods from statistical physics
+\cite{parisi:1988:statistical, opper:2003:variational, opper:2001:advancedmeanfield, tanaka:2000:information}
+%\cite{opper:2003:variational, opper:2001:advancedmeanfield, tanaka:2000:information}
+to exponential family variational posteriors, we develop a methodology that
+augments MFVB to deliver accurate uncertainty estimates for model
+variables---both for individual variables and coherently across variables. In
+particular, as we elaborate in \mysec{lr}, when the approximating posterior in
+MFVB is in the exponential family, MFVB defines a fixed-point equation in the
+means of the approximating posterior, and our approach yields a covariance
+estimate by perturbing this fixed point. We call our method \emph{linear
+response variational Bayes} (LRVB).
+
+We provide a simple, intuitive formula for calculating the linear response
+correction by solving a linear system based on the MFVB solution
+(\mysec{lr_subsection}). We show how the sparsity of this system for many common
+statistical models may be exploited for scalable computation
+(\mysec{scaling_formulas}). We demonstrate the wide applicability of LRVB by
+working through a diverse set of models to show that the LRVB covariance
+estimates are nearly identical to those produced by a Markov Chain Monte Carlo
+(MCMC) sampler, even when MFVB variance is dramatically underestimated
+(\mysec{experiments}). Finally, we focus in more depth on models for finite
+mixtures of multivariate Gaussians (\mysec{normal_mixture_model}), which have
+historically been a sticking point for MFVB covariance estimates
+\cite{bishop:2006:pattern,turner:2011:two}. We show that LRVB can give accurate
+covariance estimates orders of magnitude faster than MCMC
+(\mysec{normal_mixture_model}). We demonstrate both theoretically and
+empirically that, for this Gaussian mixture model, LRVB scales linearly in the
+number of data points and approximately cubically in the dimension of the
+parameter space (\mysec{gmm_scaling}).
+
+\paragraph{Previous Work.}
+
+Linear response methods originated in the statistical physics literature
+\cite{opper:2001:advancedmeanfield, tanaka:2000:information,
+kappen:1998:efficient, opper:2003:variational}. These methods have been applied
+to find new learning algorithms for Boltzmann machines
+\cite{kappen:1998:efficient}, covariance estimates for discrete factor graphs
+\cite{welling:2004:linear}, and independent component analysis
+\cite{hojen:2002:mean}. \cite{tanaka:1998:mean} states that linear response
+methods could be applied to general exponential family models but works out
+details only for Boltzmann machines. \cite{opper:2003:variational}, which is
+closest in spirit to the present work, derives general linear response
+corrections to variational approximations; indeed, the authors go further to
+formulate linear response as the first term in a functional Taylor expansion to
+calculate full pairwise joint marginals. However, it may not be obvious to the
+practitioner how to apply the general formulas of \cite{opper:2003:variational}.
+Our contributions in the present work are (1) the provision of concrete,
+straightforward formulas for covariance correction that are fast and easy to
+compute, (2) demonstrations of the success of our method on a wide range of new
+models, and (3) an
+\href{https://github.com/rgiordan/LinearResponseVariationalBayesNIPS2015}{accompanying suite of code}.
+
+%========================
+\section{Linear response covariance estimation} \label{sec:lr}
+%========================
+
+%------------------------
+\subsection{Variational Inference}
+%------------------------
+
+Suppose we observe $N$ data points, denoted by the $N$-long column vector $x$,
+and denote our unobserved model parameters by $\theta$. Here, $\theta$ is a
+column vector residing in some space $\Theta$; it has $J$ subgroups and total
+dimension $D$. Our model is specified by a distribution of the observed data
+given the model parameters---the likelihood $p(x | \theta)$---and a prior
+distributional belief on the model parameters $p(\theta)$. Bayes' Theorem yields
+the posterior $p(\theta | x)$.
+
+Mean-field variational Bayes (MFVB) approximates $p(\theta | x)$ by a factorized
+distribution of the form $q(\theta) = \prod_{j=1}^{J} q(\theta_j)$. $q$ is
+chosen so that the Kullback-Liebler divergence $\kl(q || p)$ between $q$ and $p$
+is minimized. Equivalently, $q$ is chosen so that $\klshort := L + S$, for $L :=
+\mbe_q[\log p (\theta | x)]$ (the expected log posterior) and $S := -
+\mbe_q[\log q(\theta)]$ (the entropy of the variational distribution),
+%
+is maximized:
+\begin{align} \label{eq:kl}
+  q^{*} &:= \argmin_{q} \kl(q || p) = \argmin_{q} \mbe_{q} \left[ \log q(\theta) - \log p(\theta | x)  \right] = \argmax_{q} E.
+\end{align}
+%
+Up to a constant in $\theta$, the objective $\klshort$ is sometimes called the
+``evidence lower bound'', or the ELBO \cite{bishop:2006:pattern}. In what
+follows, we further assume that our variational distribution,
+$q\left(\theta\right)$, is in the exponential family with natural parameter
+$\npq$ and log partition function $A$:
+%
+$
+\log q\left(\theta \vert \npq \right) =
+  \npq^{T}\theta - A\left(\npq\right)
+$
+%
+(expressed with respect to some base measure in $\theta$). We assume that
+$p\left(\theta \vert x\right)$ is expressed with respect to the same base
+measure in $\theta$ as for $q$. Below, we will make only mild regularity
+assumptions about the true posterior $p(\theta | x)$ and no assumptions about
+its form.
+
+If we assume additionally that the parameters $\npopt$ at the optimum
+$q^*(\theta) = q(\theta | \npopt)$ are in the interior of the feasible space,
+then $q(\theta | \npq)$ may instead be described by the mean parameterization:
+$\mpq := \mbe_{q} \theta$ with $\mpopt := \mbe_{q^*} \theta$. Thus, the
+objective $\klshort$ can be expressed as a function of $m$, and the first-order
+condition for the optimality of $q^*$ becomes the fixed point equation
+%
+\begin{equation}
+  \label{eq:fixed_pt}
+  \left. \frac{\partial \klshort}{\partial \mpq} \right|_{\mpq = \mpopt} = 0
+  \;
+  \Leftrightarrow
+  \;
+  \left. \left( \frac{\partial \klshort}{\partial \mpq} + \mpq \right) \right|_{\mpq = \mpopt} = \mpopt
+  \;
+  \Leftrightarrow
+  \;
+  M(\mpopt) = \mpopt
+  \textrm{ for } M(\mpq) := \frac{\partial \klshort}{\partial \mpq} + \mpq.
+\end{equation}
+
+%------------------------
+\subsection{Linear Response}\label{sec:lr_subsection}
+%------------------------
+
+Let $\vbcov$ denote the mean vector and the covariance matrix of $\theta$ under
+the variational distribution $q^{*}(\theta)$, and let $\truecov$ denote the
+covariance matrix of $\theta$ under the true posterior,
+%
+$p(\theta | x)$:
+$$
+\vbcov := \cov_{q^{*}} \theta,
+\quad \quad
+\truecov := \cov_{p} \theta.
+$$
+In MFVB, $\vbcov$ may be a poor
+estimator of $\truecov$, even when $\mpopt \approx \mbe_{p} \theta$,
+i.e., when the marginal estimated means match well
+% \cite{mackay:2003:information, wang:2005:inadequacy, bishop:2006:pattern, rue:2009:approximate, turner:2011:two}.
+ \cite{wang:2005:inadequacy, bishop:2006:pattern, turner:2011:two}. Our goal is
+ to use the MFVB solution and linear response methods to construct an improved
+ estimator for $\truecov$.  We will focus on the covariance of the natural
+ $\theta$ for simplicity, though the covariance of smooth functions of $\theta$
+ can be estimated similarly (\app{function_covariance}).
+
+The essential idea of linear response is to perturb the first-order condition
+$M(\mpopt) = \mpopt$ around its optimum. In particular, define the distribution
+$p_{t}\left(\theta\vert x\right)$ as a log-linear perturbation of the posterior:
+%
+\begin{eqnarray} \label{eq:perturbed_dens}
+\log p_{t}\left(\theta\vert x \right) & := &
+    \log p\left(\theta\vert x \right) + t^{T}\theta - \constant\left( t\right),
+\end{eqnarray}
+%
+where $\constant\left( t\right)$ is a constant in $\theta$. We assume that $p_t
+(\theta \vert x)$ is a well-defined distribution for any $t$ in an open ball
+around 0. Since $\constant\left( t\right)$ normalizes $p_t(\theta \vert x)$, it
+is in fact the cumulant-generating function of $p(\theta \vert x)$, so the
+derivatives of $\constant\left( t\right)$ evaluated at $t=0$ give the cumulants
+of $\theta$. To see why this perturbation may be useful, recall that the second
+cumulant of a distribution is the covariance matrix, our desired estimand:
+%
+$$
+  \truecov = \cov_{p}(\theta) = \left. \frac{d}{dt^T dt} C(t) \right|_{t=0} = \left. \frac{d}{dt^T} \mbe_{p_t} \theta \right|_{t=0}.
+$$
+
+The practical success of MFVB relies on the fact that its estimates of the mean
+are often good in practice. So we assume that $\mpopt_t \approx \mbe_{p_t}
+\theta$, where $\mpopt_t$ is the mean parameter characterizing $q_t^*$ and
+$q_t^*$ is the MFVB approximation to $p_t$. (We examine this assumption further
+in \mysec{experiments}.) Taking derivatives with respect to $t$ on both sides of
+this mean approximation and setting $t=0$ yields
+%
+\begin{equation}\label{eq:lrvb_derivative_defn}
+  \truecov = \cov_{p}(\theta) \approx \left. \frac{d\mpq^*_t}{dt^T} \right|_{t=0} =: \lrcov,
+\end{equation}
+%
+where we call $\lrcov$ the \emph{linear response variational Bayes} (LRVB)
+estimate of the posterior covariance of $\theta$.
+
+We next show that there exists a simple formula for $\lrcov$.
+Recalling the form of the KL divergence (see~\eq{kl}), we have that
+$-\kl(q || p_t) = E + t^{T} m =: E_t$. Then by \eq{fixed_pt}, we have
+$\mpopt_t = M_t(\mpopt_t)$ for $M_t(\mpq) := M(\mpq) + t$. It follows from
+the chain rule that
+\begin{equation}\label{eq:dM_dt}
+  \frac{d\mpq^*_t}{dt}
+    = \left. \frac{\partial M_t}{\partial \mpq^T} \right|_{\mpq = \mpopt_t}
+      \frac{d\mpopt_t}{dt} + \frac{\partial M_t}{\partial t}
+    = \left. \frac{\partial M_t}{\partial \mpq^T} \right|_{\mpq = \mpopt_t}
+      \frac{d\mpopt_t}{dt} + I,
+\end{equation}
+where $I$ is the identity matrix.  If we assume that we are at a strict local
+optimum and so can invert the Hessian of $E$, then evaluating at $t=0$ yields
+%
+\begin{equation}
+  \label{eq:gen_lrcov}
+  \lrcov = \left. \frac{d\mpq^*_t}{dt^T} \right|_{t=0} = \frac{\partial M}{\partial \mpq} \lrcov + I
+    = \left(\frac{\partial^2 \klshort}{\partial \mpq \partial \mpq^T} + I \right) \lrcov + I
+    \quad
+    \Rightarrow
+    \quad
+    \lrcov = -\left(\frac{\partial^2 \klshort}{\partial \mpq \partial \mpq^T} \right)^{-1},
+\end{equation}
+%
+where we have used the form for $M$ in \eq{fixed_pt}. So the LRVB estimator
+$\lrcov$ is the negative inverse Hessian of the optimization objective, $E$, as
+a function of the mean parameters. It follows from \eq{gen_lrcov} that $\lrcov$
+is both symmetric and positive definite when the variational distribution
+$q^{*}$ is at least a local maximum of $E$.
+
+We can further simplify \eq{gen_lrcov} by using the exponential family form of
+the variational approximating distribution $q$. For $q$ in exponential family
+form as above, the entropy $S$ is dual to the log partition function $A$
+\cite{wainwright2008graphical}, so $S = -\npq^T \mpq + A(\npq)$; hence,
+%
+$$
+  \frac{dS}{dm}
+    = \frac{\partial S}{\partial \npq^T} \frac{d\npq}{d\mpq} + \frac{\partial S}{\partial \mpq}
+    = \left(\frac{\partial A}{\partial \npq} - \mpq \right) \frac{d\npq}{d\mpq} - \npq(\mpq)
+    = - \npq(\mpq).
+$$
+%
+Recall that for exponential families, $\partial \npq(\mpq) / \partial \mpq =
+V^{-1}$. So \eq{gen_lrcov} becomes\footnote{For a comparison of this formula
+with the frequentist ``supplemented expectation-maximization'' procedure see
+\app{SEM}.}
+%
+\begin{align}
+  \nonumber
+  \lrcov = -\left(\frac{\partial^2 L}{\partial m \partial m^T} + \frac{\partial^2 S}{\partial m \partial m^T}\right)^{-1}
+    &= (V^{-1} + H)^{-1}, \textrm{ for } H := \frac{\partial^2 L}{\partial m \partial m^T}.\\
+  \label{eq:spec_lrvb}
+  \textrm{I.e, } \lrcov &= (I - VH)^{-1} V.
+\end{align}
+
+When the true posterior $p(\theta | x)$ is in the exponential family and
+contains no products of the variational moment parameters, then $H=0$ and
+$\lrcov=\vbcov$. In this case, the mean field assumption is correct, and the
+LRVB and MFVB covariances coincide at the true posterior covariance.
+Furthermore, even when the variational assumptions fail, as long as certain mean
+parameters are estimated exactly, then this formula is also exact for
+covariances. E.g., notably, MFVB is well-known to provide arbitrarily bad
+estimates of the covariance of a multivariate normal posterior
+%\cite{wang:2005:inadequacy,bishop:2006:pattern,turner:2011:two},
+\cite{mackay:2003:information,wang:2005:inadequacy,bishop:2006:pattern,turner:2011:two},
+but since MFVB estimates the means exactly, LRVB estimates the covariance exactly
+(see~\app{mvn_exact}).
+
+%========================
+\subsection{Scaling the matrix inverse} \label{sec:scaling_formulas}
+%========================
+
+\eq{spec_lrvb} requires the inverse of a matrix as large
+as the parameter dimension of the posterior $p(\theta | x)$,
+which may be computationally prohibitive.
+Suppose we are interested in the covariance of parameter sub-vector $\alpha$,
+and let $z$ denote the remaining parameters: $\theta = \left( \alpha, z \right)^{T}$.
+We can partition
+%
+$
+\truecov = \left( \truecov_{\alpha}, \truecov_{\alpha z}; \truecov_{z\alpha}, \truecov_{z} \right).
+$
+%
+Similar partitions exist for $\vbcov$ and $H$.
+If we assume a mean-field factorization $q(\alpha,z) = q(\alpha)q(z)$, then
+$\vbcov_{\alpha z} = 0$. (The variational
+distributions may factor further as well.)
+We calculate the Schur complement of $\lrcov$ in \eq{spec_lrvb}
+with respect to its $z$th
+component to find that %$\hat{\Sigma}_{\alpha}$ equals
+%
+\begin{equation} \label{eq:nuisance_lrvb_est}
+\hat{\truecov}_{\alpha} =
+ ( I_{\alpha} - V_{\alpha}H_{\alpha} -
+  V_{\alpha}H_{\alpha z} \left(I_{z} - V_{z}H_{z})^{-1}
+  V_{z}H_{z\alpha}\right)^{-1} V_{\alpha}.
+\end{equation}
+Here, $I_\alpha$ and $I_z$ refer to $\alpha$- and $z$-sized identity
+matrices, respectively.  In cases where
+$\left(I_{z} - V_{z}H_{z}\right)^{-1}$
+can be efficiently calculated (e.g., all the experiments
+in \mysec{experiments}; see \fig{sparsity_patterns} in \app{np_details}),
+\eq{nuisance_lrvb_est}
+requires only an $\alpha$-sized inverse.
+
+%========================
+\section{Experiments} \label{sec:experiments}
+%========================
+
+We compare the covariance estimates from LRVB and MFVB in a range of models,
+including models both with and without conjugacy. We demonstrate the superiority
+of the LRVB estimate to MFVB in all models before focusing in on Gaussian
+mixture models for a more detailed scalability analysis
+\footnote{All the
+code is available on our
+\href{https://github.com/rgiordan/LinearResponseVariationalBayesNIPS2015}{Github repository},
+\texttt{rgiordan/LinearResponseVariationalBayesNIPS2015}}.
+
+For each model, we simulate datasets with a range of parameters.  In the graphs,
+each point represents the outcome from a single simulation.  The horizotal axis
+is always the result from an MCMC procedure, which we take as the ground truth.
+As discussed in \mysec{lr_subsection}, the accuracy of the LRVB covariance for a
+sufficient statistic depends on the approximation $\mpopt_t \approx \mbe_{p_t}
+\theta$. In the models to follow, we focus on regimes of moderate dependence
+where this is a reasonable assumption for most of the parameters (see
+\mysec{re_simulation} for an exception). Except where explicitly mentioned, the
+MFVB means of the parameters of interest coincided well with the MCMC means, so
+our key assumption in the LRVB derivations of \mysec{lr} appears to hold.
+
+%------------------------
+\subsection{Normal-Poisson model} \label{sec:normal_poisson_model}
+%------------------------
+
+\paragraph{Model.}
+First consider a Poisson generalized linear mixed model, exhibiting non-conjugacy.
+We observe Poisson draws $y_n$ and a design vector $x_n$, for $n=1,...,N$.
+Implicitly below, we will everywhere condition on the $x_n$, which
+we consider to be a fixed design matrix.
+The generative model is:
+\begin{align}
+  z_n \vert \beta, \tau \indep \gauss\left(z_n \vert \beta x_n, \tau^{-1}\right), &
+  \quad
+  y_n \vert z_n \indep \textrm{Poisson}\left(y_n \vert \exp(z_n)\right), \label{eq:pn_model}\\
+  \beta \sim \gauss( \beta \vert 0, \sigma^2_\beta), &
+  \quad
+  \tau \sim \Gamma( \tau \vert \alpha_\tau, \beta_\tau).
+  \nonumber
+\end{align}
+%
+For MFVB, we factorize $q\left(\beta,\tau,z\right) =
+q\left(\beta\right)q\left(\tau\right)\prod_{n=1}^{N}q\left(z_{n}\right)$.
+Inspection reveals that the optimal $q\left(\beta\right)$ will be Gaussian, and
+the optimal $q\left(\tau\right)$ will be gamma (see \app{np_details}). Since the
+optimal $q\left(z_n\right)$ does not take a standard exponential family form, we
+restrict further to Gaussian $q\left(z_{n}\right)$. There are product terms in
+$L$ (for example, the term
+$\mbeq\left[\tau\right]\mbeq\left[\beta\right]\mbeq\left[z_{n}\right]$), so
+$H\ne0$, and the mean field approximation does not hold; we expect LRVB to
+improve on the MFVB covariance estimate.  A detailed description of how to
+calculate the LRVB estimate can be found in \app{np_details}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Results.}
+
+<<load_normal_poisson_sims>>=
+
+# Load and pre-process the simulation results.
+pn.results <- read.csv("./data/poisson_glmm_z_theta_cov_1_100_results.csv", header=T)
+
+# A data frame for graphing:
+pn.graph.df <- filter(pn.results, measurement %in%  c("mean", "sd"),
+                                  variable %in% c("mu", "tau", "log_tau")) %>%
+  	dcast(sim.id + variable + measurement ~ method)
+
+# A data frame with analysis details:
+pn.analysis.df <- filter(pn.results, variable == "analysis") %>%
+	dcast(variable ~ measurement)
+
+# A data frame with true parameters:
+pn.truth.df <- filter(pn.results, measurement == "mean", method == "truth",
+                                  variable %in% c("mu", "tau", "log_tau")) %>%
+	dcast(sim.id ~ variable)
+
+# A data frame with a (sampled set of rows from) the covariance of the main
+# parameters with z
+pn.z.cov.df <- read.csv("./data/poisson_glmm_z_theta_cov_1_100_theta_z_cov_results_compressed.csv")
+@
+
+
+<<poisson_glmm_commands, results="asis">>=
+# Define LaTeX macros that will let us automatically refer
+# to simulation parameters.
+cat("\\newcommand{\\pnn}{", pn.analysis.df$n, "}\n", sep="")
+cat("\\newcommand{\\pnnsims}{", nrow(pn.truth.df), "}\n", sep="")
+
+# Priors
+cat("\\newcommand{\\pnmupriorvar}{", pn.analysis.df$mu_prior_var, "}\n", sep="")
+cat("\\newcommand{\\pntaualpha}{", pn.analysis.df$tau_prior_alpha, "}\n", sep="")
+cat("\\newcommand{\\pntaubeta}{", pn.analysis.df$tau_prior_beta, "}\n", sep="")
+
+# MCMC
+cat("\\newcommand{\\pnmcmciters}{", pn.analysis.df$mcmc_iters, "}\n", sep="")
+#cat("\\newcommand{\\pnmcmciters}{", 13000, "}\n", sep="")
+
+# The point of this is simply to extract a plottable legend.
+# When using this, make sure you always declate your colors in the same order.
+pn.plot.with.legend <-
+  ggplot(filter(pn.graph.df, variable == "mu", measurement == "sd")) +
+  geom_point(aes(x=mcmc, y=mfvb, color="mfvb"), size=3) +
+  geom_point(aes(x=mcmc, y=lrvb, color="lrvb"), size=3) +
+  scale_color_discrete(name="Method:")
+
+pn.legend <- GGPlotLegend(pn.plot.with.legend)
+@
+
+We simulated $\pnnsims$ datasets, each with $\pnn$ data points and a randomly
+chosen value for $\mu$ and $\tau$.  We drew the design matrix $x$ from a normal
+distribution and held it fixed throughout.  We set prior hyperparameters
+$\sigma_\beta^{2} = \pnmupriorvar$, $\alpha_\tau = \pntaualpha$, and $\beta_\tau =
+\pntaubeta$. To get the ``ground truth'' covariance matrix, we took
+$\pnmcmciters$ draws from the posterior with the R \texttt{MCMCglmm} package
+\cite{rpackage:MCMCglmm}, which used a combination of Gibbs and Metropolis
+Hastings sampling.  Our LRVB estimates used the autodifferentiation software
+\texttt{JuMP} \cite{JuMP:LubinDunningIJOC}.
+
+Results are shown in \fig{PN_SimulationResults}. Since $\tau$ is high in many of
+the simulations, $z$ and $\beta$ are correlated, and MFVB underestimates the
+standard deviation of $\beta$ and $\tau$. LRVB matches the MCMC standard
+deviation for all $\beta$, and matches for $\tau$ in all but the most correlated
+simulations. When $\tau$ gets very high, the MFVB assumption starts to bias the
+point estimates of $\tau$, and the LRVB standard deviations start to differ from
+MCMC.  Even in that case, however, the LRVB standard deviations are much more
+accurate than the MFVB estimates, which underestimate the uncertainty
+dramatically.  The final plot shows that LRVB estimates the covariances of $z$
+with $\beta$, $\tau$, and $\log \tau$ reasonably well, while MFVB considers them
+independent.
+
+<<PN_SimulationResults, fig.width=2, fig.height=2, out.width=c('0.17\\linewidth', '0.17\\linewidth', '0.17\\linewidth', '0.17\\linewidth', '0.17\\linewidth', '0.05\\linewidth'), out.height=c('0.17\\linewidth', '0.17\\linewidth', '0.17\\linewidth', '0.17\\linewidth', '0.17\\linewidth', '0.17\\linewidth'), fig.show='hold', fig.cap="Posterior mean and covariance estimates on normal-Poisson simulation data.">>=
+
+# I suspect the vectors for fig.width and fig.height are not working -- it seems to
+# be just taking the last entry.
+
+#Note that the code calls beta "mu".
+ggplot(filter(pn.graph.df, variable == "mu", measurement == "mean")) +
+  geom_point(aes(x=mcmc, y=mfvb), size=3) +
+  xlab("MCMC mean") + ylab("MFVB mean") +
+  expand_limits(x=0, y=0) +
+  geom_abline(aes(slope=1, intercept=0), color="gray") +
+  geom_hline(aes(yintercept=0), color="gray") +
+  geom_vline(aes(xintercept=0), color="gray") +
+  scale_color_discrete(name="Method:") +
+    ggtitle(expression(beta ~ "  mean"))
+
+ggplot(filter(pn.graph.df, variable == "mu", measurement == "sd")) +
+  geom_point(aes(x=mcmc, y=mfvb, color="mfvb"), size=3) +
+  geom_point(aes(x=mcmc, y=lrvb, color="lrvb"), size=3) +
+  xlab("MCMC std dev") + ylab("VB std dev") +
+  expand_limits(x=0, y=0) +
+  geom_abline(aes(slope=1, intercept=0), color="gray") +
+  geom_hline(aes(yintercept=0), color="gray") +
+  geom_vline(aes(xintercept=0), color="gray") +
+  scale_color_discrete(name="Method:") +
+  ggtitle(expression(beta ~ "  sd")) +
+  theme(legend.position="none")
+
+ggplot(filter(pn.graph.df, variable == "tau", measurement == "mean")) +
+  geom_point(aes(x=mcmc, y=mfvb), size=3) +
+  xlab("MCMC mean") + ylab("MFVB mean") +
+  expand_limits(x=0, y=0) +
+  geom_abline(aes(slope=1, intercept=0), color="gray") +
+  geom_hline(aes(yintercept=0), color="gray") +
+  geom_vline(aes(xintercept=0), color="gray") +
+  scale_color_discrete(name="Method:") +
+  ggtitle(expression(tau ~ "  mean"))
+
+ggplot(filter(pn.graph.df, variable == "tau", measurement == "sd")) +
+	geom_point(aes(x=mcmc, y=mfvb, color="mfvb"), size=3) +
+	geom_point(aes(x=mcmc, y=lrvb, color="lrvb"), size=3) +
+	xlab("MCMC std dev") + ylab("VB std dev") +
+	expand_limits(x=0, y=0) +
+	geom_abline(aes(slope=1, intercept=0), color="gray") +
+	geom_hline(aes(yintercept=0), color="gray") +
+	geom_vline(aes(xintercept=0), color="gray") +
+	scale_color_discrete(name="Method:") +
+  ggtitle(expression(tau ~ "  sd")) +
+  theme(legend.position="none")
+
+# Put a second (0, 0) point to overplot the lrvb points.
+# The initial order must be maintained so that the colors match the
+# other plot.
+ggplot(pn.z.cov.df) +
+  geom_point(aes(x=0, y=0, color="mfvb"), size=3) +
+  geom_point(aes(x=mcmc, y=lrvb, color="lrvb"), size=3) +
+  geom_point(aes(x=0, y=0, color="mfvb"), size=3) +
+  geom_abline(aes(intercept=0, slope=1)) +
+  xlab("MCMC cov") + ylab("VB cov") +
+  expand_limits(x=0, y=0) +
+  geom_abline(aes(slope=1, intercept=0), color="gray") +
+  theme(legend.position="none") +
+  scale_x_continuous(breaks=pretty_breaks(n=4)) +
+  ggtitle(expression("cov with z"))
+
+color.legend.img <- readPNG("./static_images/color_legend.png")
+grid::grid.newpage()
+grid::grid.raster(color.legend.img, x=0.52, y=0.5, height=0.3, width=0.3 * 0.19 / 0.05)
+#grid::grid.raster(color.legend.img)
+
+#grid.arrange(pn.legend)
+@
+
+
+%------------------------
+\subsection{Linear random effects} \label{sec:random_effects_model}
+%------------------------
+
+<<load_random_effect_sims>>=
+
+# Load and pre-process the simulation results.
+re.results <- read.csv("./data/re_regression_full_cov_final.csv", header=T)
+
+# A data frame for graphing:
+re.graph.df <- filter(re.results, measurement %in%  c("mean", "sd")) %>%
+    dcast(sim.id + variable + measurement + component ~ method)
+
+# A data frame with analysis details:
+re.analysis.df <- filter(re.results, method == "analysis") %>%
+  dcast(measurement ~ variable)
+
+# A data frame with true parameters:
+re.truth.df <- filter(re.results, measurement == "mean", method == "truth") %>%
+  dcast(sim.id + component ~ variable)
+
+re.n.sim <- length(unique(re.truth.df$sim.id))
+
+re.plot.with.legend <-
+ggplot(filter(re.graph.df, variable == "beta", component == 2, measurement == "sd")) +
+  geom_point(aes(x=mcmc, y=mfvb, color="mfvb"), size=3) +
+  geom_point(aes(x=mcmc, y=lrvb, color="lrvb"), size=3) +
+  scale_color_discrete(name="Method:")
+
+re.legend <- GGPlotLegend(re.plot.with.legend)
+
+@
+
+<<random_effect_commands, results="asis">>=
+# Define LaTeX macros that will let us automatically refer
+# to simulation parameters.
+cat("\\newcommand{\\ren}{", re.analysis.df$n, "}\n", sep="")
+cat("\\newcommand{\\rensims}{", re.n.sim, "}\n", sep="")
+cat("\\newcommand{\\rerenum}{", re.analysis.df$re_num, "}\n", sep="")
+
+# Priors.  With much regret I called the beta parameter of the gamma distributions "gamma".
+cat("\\newcommand{\\reNuPriorAlpha}{", re.analysis.df$nu_prior_alpha, "}\n", sep="")
+cat("\\newcommand{\\reNuPriorGamma}{", re.analysis.df$nu_prior_gamma, "}\n", sep="")
+cat("\\newcommand{\\reTauPriorAlpha}{", re.analysis.df$tau_prior_alpha, "}\n", sep="")
+cat("\\newcommand{\\reTauPriorGamma}{", re.analysis.df$tau_prior_gamma, "}\n", sep="")
+cat("\\newcommand{\\reBetaPriorInfo}{", re.analysis.df$beta_prior_info_scale, "}\n", sep="")
+
+cat("\\newcommand{\\reZSD}{", re.analysis.df$z_sd, "}\n", sep="")
+
+# MCMC
+cat("\\newcommand{\\remcmciters}{", re.analysis.df$mcmc_iters, "}\n", sep="")
+#cat("\\newcommand{\\remcmciters}{", 20000, "}\n", sep="")
+
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Model.}
+
+Next, we consider a simple random slope linear model, with full details in
+\app{re_details}. We observe scalars $y_n$ and $r_n$ and a vector $x_n$, for
+$n=1,...,N$. Implicitly below, we will everywhere condition on all the $x_n$ and
+$r_n$, which we consider to be fixed design matrices. In general, each random
+effect may appear in multiple observations, and the index $k(n)$ indicates which
+random effect, $z_k$, affects which observation, $y_n$.  The full generative
+model is:
+%
+\begin{align*} y_n \vert \beta, z, \tau \indep \gauss\left(y_n \vert
+\beta^T x_n + r_n z_{k(n)}, \tau^{-1}\right), &\quad z_k \vert \nu \iid
+\gauss\left(z_k \vert 0, \nu^{-1}\right), \\ \beta \sim \gauss(\beta \vert 0,
+\Sigma_\beta), \quad \nu \sim \Gamma(\nu \vert \alpha_\nu, \beta_\nu), &\quad
+\tau \sim \Gamma(\tau \vert \alpha_\tau, \beta_\tau). \end{align*}
+%
+We assume the mean-field factorization $q\left(\beta,\nu,\tau,z\right) =
+q\left(\beta\right) q\left(\tau\right) q\left(\nu\right) \prod_{k=1}^{K}
+q\left(z_n\right)$.  Since this is a conjugate model, the optimal $q$ will be in
+the exponential family with no additional assumptions.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Results.}\label{sec:re_simulation}
+
+We simulated $\rensims$ datasets of $\ren$ datapoints each and $\rerenum$
+distinct random effects.  We set prior hyperparameters to $\alpha_\nu =
+\reNuPriorAlpha$, $\beta_\nu = \reNuPriorGamma$, $\alpha_\tau =
+\reTauPriorAlpha$ , $\beta_\tau = \reTauPriorGamma$, and $\Sigma_\beta =
+\reBetaPriorInfo ^ {-1} I$.  Our $x_n$ was 2-dimensional.
+%
+As in \mysec{normal_poisson_model},
+we implemented the variational solution using the autodifferentiation
+software \texttt{JuMP} \cite{JuMP:LubinDunningIJOC}. The MCMC fit was
+performed with $\remcmciters$ using \texttt{MCMCglmm} \cite{rpackage:MCMCglmm}.
+
+Intuitively, when the random effect explanatory variables $r_n$ are highly
+correlated with the fixed effects $x_n$, then the posteriors for $z$ and $\beta$
+will also be correlated, leading to a violation of the mean field assumption and
+an underestimated MFVB covariance.  In our simulation, we used $r_n = x_{1n} +
+\gauss(0, \reZSD)$, so that $r_n$ is correlated with $x_{1n}$ but not $x_{2n}$.
+The result, as seen in \fig{RE_SimulationResults}, is that $\beta_1$ is
+underestimated by MFVB, but $\beta_2$ is not. The $\nu$ parameter, in contrast,
+is not well-estimated by the MFVB approximation in many of the simulations.
+Since the LRVB depends on the approximation $\mpopt_t \approx \mbe_{p_t}
+\theta$, its LRVB covariance is not accurate either
+(\fig{RE_SimulationResults}). However, LRVB still improves on the MFVB standard
+deviation.
+%
+<<RE_SimulationResults, fig.width=2, fig.height=2, out.width='0.19\\linewidth', out.height='0.19\\linewidth', fig.show='hold', fig.cap="Posterior mean and covariance estimates on linear random effects simulation data.">>=
+
+ggplot(filter(re.graph.df, variable == "beta", component == 1, measurement == "sd")) +
+  geom_point(aes(x=mcmc, y=mfvb, color="mfvb"), size=3) +
+  geom_point(aes(x=mcmc, y=lrvb, color="lrvb"), size=3) +
+  xlab("MCMC std dev") + ylab("estimates") +
+  expand_limits(x=0, y=0) +
+  geom_abline(aes(slope=1, intercept=0), color="gray") +
+  geom_hline(aes(yintercept=0), color="gray") +
+  geom_vline(aes(xintercept=0), color="gray") +
+  scale_color_discrete(name="Method:") +
+  scale_x_continuous(breaks=pretty_breaks(n=2)) +
+  ggtitle(expression(beta[1]~"sd")) +
+  theme(legend.position="none")
+
+ggplot(filter(re.graph.df, variable == "beta", component == 2, measurement == "sd")) +
+  geom_point(aes(x=mcmc, y=mfvb, color="mfvb"), size=3) +
+  geom_point(aes(x=mcmc, y=lrvb, color="lrvb"), size=3) +
+  xlab("MCMC std dev") + ylab("estimates") +
+  expand_limits(x=0, y=0) +
+  geom_abline(aes(slope=1, intercept=0), color="gray") +
+  geom_hline(aes(yintercept=0), color="gray") +
+  geom_vline(aes(xintercept=0), color="gray") +
+  scale_color_discrete(name="Method:") +
+  scale_x_continuous(breaks=pretty_breaks(n=2)) +
+  ggtitle(expression(beta[2]~"sd")) +
+  theme(legend.position="none")
+
+ggplot(filter(re.graph.df, variable == "nu", measurement == "mean")) +
+  geom_point(aes(x=mcmc, y=mfvb), size=3) +
+  xlab("MCMC mean") + ylab("MFVB mean") +
+  expand_limits(x=0, y=0) +
+  geom_abline(aes(slope=1, intercept=0), color="gray") +
+  geom_hline(aes(yintercept=0), color="gray") +
+  geom_vline(aes(xintercept=0), color="gray") +
+  scale_x_continuous(breaks=pretty_breaks(n=4)) +
+  ggtitle(expression(nu~"mean"))
+
+ggplot(filter(re.graph.df, variable == "nu", measurement == "sd")) +
+  geom_point(aes(x=mcmc, y=mfvb, color="mfvb"), size=3) +
+  geom_point(aes(x=mcmc, y=lrvb, color="lrvb"), size=3) +
+  xlab("MCMC std dev") + ylab("estimates") +
+  expand_limits(x=0, y=0) +
+  geom_abline(aes(slope=1, intercept=0), color="gray") +
+  geom_hline(aes(yintercept=0), color="gray") +
+  geom_vline(aes(xintercept=0), color="gray") +
+  scale_color_discrete(name="Method:") +
+  ggtitle(expression(nu~"sd")) +
+  scale_x_continuous(breaks=pretty_breaks(n=4)) +
+  theme(legend.position="none")
+
+grid.arrange(re.legend)
+
+@
+%------------------------
+\subsection{Mixture of normals} \label{sec:normal_mixture_model}
+%------------------------
+\paragraph{Model.}
+%
+Mixture models constitute some of the most popular models for MFVB
+application
+\cite{blei:2003:lda, blei:2006:dp}
+%\cite{blei:2006:dp}
+and are often used as an example of where MFVB covariance estimates may go awry
+\cite{bishop:2006:pattern, turner:2011:two}. Thus, we will consider in detail a
+Gaussian mixture model (GMM) consisting of a $K$-component mixture of
+$P$-dimensional multivariate normals with unknown component means, covariances,
+and weights. In what follows, the weight $\pi_k$ is the probability of the $k$th
+component, $\mu_k$ is the $P$-dimensional mean of the $k$th component, and
+$\Lambda_k$ is the $P \times P$ precision matrix of the $k$th component (so
+$\Lambda_k^{-1}$ is the covariance parameter).  $N$ is the number of data
+points, and $x_{n}$ is the $n$th observed $P$-dimensional data point. We employ
+the standard trick of augmenting the data generating process with the latent
+indicator variables $z_{nk}$, for $n=1,...,N$ and $k=1,...,K$, such that $z_{nk} =
+1$ implies $x_{n} \sim \gauss(\mu_k, \Lambda^{-1}_k)$. So the generative model
+is:
+%
+\begin{align}
+P(z_{nk} = 1) = \pi_k, & \quad
+p(x | \pi, \mu, \Lambda, z) =
+    \prod_{n=1:N} \prod_{k=1:K} \gauss(x_n | \mu_k, \Lambda^{-1}_k)^{z_{nk}}
+    \label{eq:normal_mixture_model}
+    % p(\pi ) \propto 1, &
+    %   \quad p(\mu) \propto 1,
+    %   \quad p(\Lambda) \propto 1
+    %   \quad \textrm{(improper uniform priors)}.  \nonumber
+\end{align}
+%
+We used diffuse conditionally conjugate priors (see \app{mvn_details} for
+details). We make the variational assumption $q\left(\mu, \pi, \Lambda, z\right) =
+\prod_{k=1}^K
+q\left(\mu_k\right)q\left(\Lambda_k\right)q\left(\pi_k\right)\prod_{n=1}^N
+q\left(z_{n}\right)$. We compare the accuracy and speed of our estimates to
+Gibbs sampling on the augmented model (\eq{normal_mixture_model}) using the
+function \texttt{rnmixGibbs} from the R package \texttt{bayesm}.  We implemented
+LRVB in C++, making extensive use of
+\texttt{RcppEigen}~\cite{rpackage:RcppEigen}. We evaluate our results both on
+simulated data and on the MNIST data set~\cite{mnist:lecun1998gradient}.
+%
+<<mnist.data>>=
+# Load the scaling data.
+# TODO: Make sure it's clear how to generate this from the new data.
+load("./data/mnist_covariance_comparison_0_1_full.data.25.Rdata")
+mnist.test.n <- sum(test.results)
+mnist.test.accuracy <- sum(diag(test.results)) / mnist.test.n
+@
+%
+<<define_mnist_parameters, results="asis">>=
+# Define LaTeX macros that will let us automatically refer
+# to simulation parameters.
+cat("\\newcommand{\\MNISTn}{", n, "}\n", sep="")
+cat("\\newcommand{\\MNISTTestN}{", mnist.test.n, "}\n", sep="")
+cat("\\newcommand{\\MNISTp}{", p, "}\n", sep="")
+cat("\\newcommand{\\MNISTTestAccuracy}{",
+  sprintf("%0.2f", mnist.test.accuracy), "}\n", sep="")
+cat("\\newcommand{\\MNISTTestError}{",
+  sprintf("%0.2f", 1-mnist.test.accuracy), "}\n", sep="")
+@
+%
+<<load_normal_mixture_sims>>=
+
+# Load and pre-process the simulation results.
+simulation.name <- "with_cov_n10000_k2_p2_sims100_scale0.5_anisotropy1.0_6000draws"
+load(sprintf("./data/covariance_simulations_%s.Rdata", simulation.name))
+
+GetSimDf <- function(i) {
+  sim.results[[i]]$sim.df
+}
+
+GetTimingDf <- function(i) {
+  sim.results[[i]]$timing.df
+}
+
+core.vars <- do.call(rbind, lapply(1:length(sim.results), GetSimDf))
+
+# Remove simulations with an inappropriately small minimum
+# effective sample size.  The gibbs results from them cannot be
+# trusted.
+effsize.cutoff <- 500
+gibbs.effsize <- core.vars[c("var", "sim", "gibbs.effsize")]
+min.eff.sizes <-
+  group_by(gibbs.effsize, sim) %>%
+  summarize(min.effsize=min(gibbs.effsize))
+good.sims <- filter(min.eff.sizes, min.effsize > effsize.cutoff)$sim
+core.vars <- core.vars[names(core.vars) != "gibbs.effsize"]
+core.vars <- filter(core.vars, sim %in% good.sims)
+
+core.vars.melt <- melt(core.vars, id.vars = c("var", "sim"))
+core.vars.melt$measure <- sub("^.*\\.", "", core.vars.melt$variable)
+core.vars.melt$method <- sub("\\..*$", "", core.vars.melt$variable)
+core.vars.melt$parameter <- sub("\\_.*$", "", core.vars.melt$var)
+
+core.vars.df <- dcast(core.vars.melt,
+                      sim + var + parameter + measure ~ method)
+
+# Get the timing information.
+timing.df <- data.frame(do.call(rbind,
+                 lapply(1:length(sim.results), GetTimingDf)))
+timing.df$sim <- 1:length(sim.results)
+timing.df <- filter(timing.df, sim %in% good.sims)
+timing.means <- colMeans(timing.df)
+
+# Get the off-diagonal covariances.
+GetCovDf <- function(i) {
+  x <- sim.results[[i]]
+  cov.size <- nrow(x$lrvb.cov)
+  cov.names <- outer(1:cov.size, 1:cov.size, function(x, y) { paste(x, y, sep=".")})
+  cov.df <- data.frame(t(c(x$gibbs.cov, x$lrvb.cov)))
+  names(cov.df) <- c(paste("gibbs", cov.names, sep="_"),
+                     paste("lrvb", cov.names, sep="_"))
+  return(cov.df)
+}
+
+raw.covs.df <- do.call(rbind, lapply(1:length(sim.results), GetCovDf))
+diag.cols <- as.logical(diag(sqrt(ncol(raw.covs.df) / 3)))
+offdiag.covs.df <- raw.covs.df[, !diag.cols]
+
+covs.df <- offdiag.covs.df
+covs.df$sim <- 1:nrow(covs.df)
+covs.df <- filter(covs.df, sim %in% good.sims)
+covs.df.melt <- melt(covs.df, id.vars="sim")
+covs.df.melt$parameter <- sub("^.*_", "", covs.df.melt$variable)
+covs.df.melt$method <- sub("_.*$", "", covs.df.melt$variable)
+core.covs.df <- dcast(covs.df.melt, sim + parameter ~ method)
+
+gmm.plot.with.legend <-
+  ggplot(filter(core.vars.df, parameter == "mu", measure == "sd")) +
+    geom_point(aes(x=gibbs, y=lrvb, color="LRVB"), size=2) +
+    geom_point(aes(x=gibbs, y=vb, color="MFVB"), size=2) +
+    scale_color_discrete(name="Method:")
+
+gmm.legend <- GGPlotLegend(gmm.plot.with.legend)
+
+@
+%
+<<define_simulation_parameters, results="asis">>=
+# Define LaTeX macros that will let us automatically refer
+# to simulation parameters.
+cat("\\newcommand{\\GMMeffsizecutoff}{", effsize.cutoff, "}\n", sep="")
+cat("\\newcommand{\\GMMsimulationsize}{", length(good.sims), "}\n", sep="")
+cat("\\newcommand{\\GMMsimulationn}{", n, "}\n", sep="")
+cat("\\newcommand{\\GMMsimulationp}{", p, "}\n", sep="")
+cat("\\newcommand{\\GMMsimulationk}{", k, "}\n", sep="")
+cat("\\newcommand{\\GMMsimulationvbtime}{",
+    sprintf("%0.2f", timing.means["vb.time"]), "}\n", sep="")
+cat("\\newcommand{\\GMMsimulationgibbstime}{",
+    sprintf("%0.2f", timing.means["gibbs.time"]), "}\n", sep="")
+@
+
+\paragraph{Results.} %\label{sec:gmm_cov_results}
+
+For simulations, we generated $N=\GMMsimulationn$ data points from
+$K=\GMMsimulationk$ multivariate normal components in
+$P=\GMMsimulationp$ dimensions.  MFVB is expected
+to underestimate the marginal variance of $\mu$, $\Lambda$, and $\log(\pi)$
+when the components overlap since that induces correlation in the
+posteriors due to the uncertain classification of points between the
+clusters. We check the covariances estimated with
+\eq{spec_lrvb} against a Gibbs sampler, which we treat as the ground
+truth.\footnote{The likelihood described in \mysec{normal_mixture_model} is symmetric under
+relabeling.  When the component locations and shapes have
+a real-life interpretation, the researcher is generally
+interested in the uncertainty of $\mu$, $\Lambda$, and $\pi$ for a
+particular labeling, not the
+marginal uncertainty over all possible re-labelings.  This poses
+a problem for standard MCMC methods, and we restrict our simulations
+to regimes where label switching did not occur in our Gibbs sampler.
+The MFVB solution conveniently avoids this problem since the mean field
+assumption prevents it from representing more than one mode of the
+joint posterior.}
+
+We performed $\GMMsimulationsize$ simulations, each of which had
+at least $\GMMeffsizecutoff$ effective Gibbs
+samples in each variable---calculated with the R tool \texttt{effectiveSize}
+from the \texttt{coda} package \cite{rpackage:coda}.
+The first three plots show the diagonal standard deviations,
+and the third plot shows the off-diagonal covariances.  Note
+that the off-diagonal covariance plot excludes the MFVB estimates since most
+of the values are zero.
+%
+\fig{SimulationStandardDeviations} shows that the
+raw MFVB covariance estimates are often quite different from the
+Gibbs sampler results, while the LRVB estimates match
+the Gibbs sampler closely.
+
+For a real-world example, we fit a $K=2$ GMM
+to the $N=\MNISTn$ instances of handwritten $0$s and $1$s in the
+MNIST data set. We used PCA to reduce the pixel intensities to $P=\MNISTp$
+dimensions. Full details are provided in \app{mnist_details}.
+In this MNIST analysis, the $\Lambda$
+standard deviations were under-estimated by MFVB
+but correctly estimated by LRVB (\fig{SimulationStandardDeviations}); the other parameter standard deviations
+were estimated correctly by both and are not shown.
+%
+<<SimulationStandardDeviations, fig.width=2.5, fig.height=2.5, out.width='0.19\\linewidth', out.height='0.19\\linewidth', fig.show='hold', fig.show='hold', fig.cap="Posterior mean and covariance estimates on GMM simulation and MNIST data.">>=
+
+  ggplot(filter(core.vars.df, parameter == "mu", measure == "sd")) +
+    geom_point(aes(x=gibbs, y=lrvb, color="LRVB"), size=2) +
+    geom_point(aes(x=gibbs, y=vb, color="MFVB"), size=2) +
+    xlab("Gibbs std dev") + ylab("estimates") +
+    expand_limits(x=0, y=0) +
+    geom_abline(aes(slope=1, intercept=0), color="gray") +
+    geom_hline(aes(yintercept=0), color="gray") +
+    geom_vline(aes(xintercept=0), color="gray") +
+    scale_color_discrete(name="Method:") +
+    ggtitle(expression(Sim~mu~ sd)) +
+    scale_x_continuous(breaks=pretty_breaks(n=4)) +
+    theme(legend.position="none")
+
+  ggplot(filter(core.vars.df, parameter == "pi", measure == "sd")) +
+    geom_point(aes(x=gibbs, y=lrvb, color="LRVB"), size=2) +
+    geom_point(aes(x=gibbs, y=vb, color="MFVB"), size=2) +
+    xlab("Gibbs std dev") + ylab("estimates") +
+    expand_limits(x=0, y=0) +
+    geom_abline(aes(slope=1, intercept=0), color="gray") +
+    geom_hline(aes(yintercept=0), color="gray") +
+    geom_vline(aes(xintercept=0), color="gray") +
+    scale_color_discrete(name="Method:") +
+    ggtitle(expression(Sim~log(pi)~ sd)) +
+    scale_x_continuous(breaks=pretty_breaks(n=3)) +
+    theme(legend.position="none")
+
+  ggplot(core.covs.df) +
+    geom_point(aes(x=gibbs, y=lrvb, color="LRVB"), size=2) +
+    xlab("Gibbs off-diagonal covariance") + ylab("estimates") +
+    expand_limits(x=0, y=0) +
+    geom_abline(aes(slope=1, intercept=0), color="gray") +
+    scale_color_discrete(name="Method:") +
+    ggtitle("Sim off-diag\ncovariances") +
+    geom_hline(aes(yintercept=0), color="gray") +
+    geom_vline(aes(xintercept=0), color="gray") +
+    scale_x_continuous(breaks=pretty_breaks(n=3)) +
+    theme(legend.position="none")
+
+  ggplot(filter(mnist.core.vars.df, parameter == "lambda", measure == "sd")) +
+    geom_point(aes(x=gibbs, y=lrvb, color="LRVB"), size=2) +
+    geom_point(aes(x=gibbs, y=vb, color="MFVB"), size=2) +
+    xlab("Gibbs std dev") + ylab("estimates") +
+    expand_limits(x=0, y=0) +
+    geom_abline(aes(slope=1, intercept=0), color="gray") +
+    geom_hline(aes(yintercept=0), color="gray") +
+    geom_vline(aes(xintercept=0), color="gray") +
+    scale_color_discrete(name="Method:") +
+    scale_x_continuous(breaks=pretty_breaks(n=3)) +
+    ggtitle(expression(MNIST~Lambda~ sd)) +
+    theme(legend.position="none")
+
+  grid.arrange(gmm.legend)
+@
+%------------------------
+\subsection{Scaling experiments} \label{sec:gmm_scaling}
+%------------------------
+
+<<scaling.data>>=
+# Load the scaling data.
+# TODO: Make sure it's clear how to generate this from the new repo.
+load("./data/scaling_simulation_more.Rdata")
+timing.melt <- timing.melt[!is.na(timing.melt$value), ]
+
+# TODO: Make sure the new filename works.
+#gmm.scaling.p <- read.csv("data/scaling_simulation_very_high_p.csv", header=T)
+gmm.scaling.p <- read.csv("data/new_scaling_p_results.csv", header=T)
+@
+
+We here explore the computational scaling of LRVB in more depth
+for the finite Gaussian mixture model (\mysec{normal_mixture_model}).
+In the terms of \mysec{scaling_formulas}, $\alpha$
+includes the sufficient statistics from $\mu$, $\pi$, and $\Lambda$,
+and grows as $O(KP^2)$.
+The sufficient statistics for the variational posterior of
+$\mu$ contain the $P$-length vectors $\mu_k$, for each
+$k$, and the $(P + 1) P / 2$ second-order products
+in the covariance matrix $\mu_k \mu_k^T$.  Similarly, for each $k$,
+the variational posterior of $\Lambda$ involves the
+$(P + 1) P / 2$ sufficient statistics in the symmetric matrix
+$\Lambda_k$ as well as the term $\log |\Lambda_k|$.  The
+sufficient statistics for the posterior of $\pi_k$ are the $K$
+terms $\log \pi_k$.\footnote{Since $\sum_{k=1}^{K} \pi_k = 1$, using $K$
+sufficient statistics involves one redundant parameter.
+However, this does not violate any of the necessary assumptions
+for \eq{spec_lrvb}, and it considerably simplifies the calculations.
+Note that though the perturbation argument of \mysec{lr}
+requires the parameters of
+$p(\theta | x)$ to be in the interior of the feasible space,
+it does not require that the parameters of $p(x | \theta)$
+be interior.}
+So, minimally, \eq{spec_lrvb}
+will require the inverse of a matrix of size $O(KP^2)$.
+%
+The sufficient statistics for
+$z$ have dimension $K \times N$.  Though
+the number of parameters thus grows with the number of
+data points, $H_{z}=0$ for the multivariate normal
+(see \app{mvn_details}),
+so we can apply \eq{nuisance_lrvb_est} to replace the
+inverse of an $O(KN)$-sized matrix with multiplication by the same matrix.
+%
+Since a matrix inverse is cubic in the size of the matrix,
+the worst-case scaling for LRVB is then $O(K^2)$ in $K$,
+$O(P^6)$ in $P$, and $O(N)$ in $N$.
+
+In our simulations (\fig{ScalingGraphs}) we can see that,
+in practice, LRVB scales linearly\footnote{The Gibbs sampling time was linearly rescaled to the amount
+of time necessary to achieve 1000 effective samples in the slowest-mixing
+component of any parameter.  Interestingly, this rescaling
+leads to increasing efficiency in the Gibbs sampling at low $P$ due
+to improved mixing, though the benefits cease to accrue at moderate dimensions.}
+ in $N$
+and approximately cubically in $P$ across the dimensions considered.\footnote{For numeric stability
+we started the optimization procedures for MFVB at the true
+values, so the time to compute the optimum in our simulations
+was very fast and not representative of practice.
+On real data, the optimization time will depend on the
+quality of the starting point.
+Consequently, the times shown for LRVB are only the
+times to compute the LRVB estimate.  The optimization times were
+on the same order.}
+The $P$ scaling is presumably better than the theoretical worst
+case of $O(P^6)$ due to extra efficiency in the numerical linear algebra.
+%
+Note that the vertical axis of the leftmost plot is on the log scale.
+At all the values of $N$, $K$ and $P$
+considered here, LRVB was at least as fast as Gibbs sampling and
+often orders of magnitude faster.
+%
+<<ScalingGraphs, fig.width=3, fig.height=2.5, out.width='0.3\\linewidth', out.height='0.25\\linewidth', fig.show='hold', fig.cap="Scaling of LRVB and Gibbs on simulation data in both log and linear scales.  Before taking logs, the line in the two lefthand (N) graphs is $y\\propto x$, and in the righthand (P) graph, it is $y \\propto x^3$.">>=
+
+# Note that I just chose the intercepts for the y = ax lines by hand.
+method.vars <- c("lrvb", "gibbs.scaled")
+method.labels <- c("LRVB", "Gibbs")
+ggplot(filter(timing.melt, variable %in% method.vars, p == 3)) +
+  geom_point(aes(x=n, y=value, color=variable), size=3) +
+  geom_line(aes(x=n, y=value, color=variable)) +
+  scale_color_discrete(name="Method:", limits=method.vars,
+                       labels=method.labels) +
+  xlab("Number of data points (N)") + ylab("Running time (seconds)") +
+  scale_x_log10(breaks=unique(timing.melt$n)[c(1, 3, 5)]) + scale_y_log10() +
+  geom_abline(aes(intercept=log10(3.162278e-05), slope=1)) +
+  theme(legend.position="top")
+
+ggplot(filter(timing.melt, variable == "lrvb", p == 3)) +
+  geom_point(aes(x=n, y=value, color=variable), size=3) +
+  geom_line(aes(x=n, y=value, color=variable)) +
+  scale_color_discrete(name="Method:", limits=method.vars,
+                       labels=method.labels) +
+  xlab("Number of data points (N)") + ylab("Running time (seconds)") +
+  #scale_x_log10(breaks=unique(timing.melt$n)) + scale_y_log10() +
+  scale_x_continuous()  +
+  geom_abline(aes(intercept=0, slope=3.162278e-05)) +
+  theme(legend.position="top")
+
+ggplot(filter(gmm.scaling.p, variable %in% method.vars)) +
+  geom_point(aes(x=p, y=value, color=variable), size=3) +
+  geom_line(aes(x=p, y=value, color=variable)) +
+  scale_color_discrete(name="Method:", limits=method.vars,
+                       labels=method.labels) +
+  xlab("Dimension of problem (P)") + ylab("Running time (seconds)") +
+  geom_abline(aes(slope=3, intercept=-3.31584))  +
+  scale_x_log10(breaks=c(2, 4, 8, 16)) + scale_y_log10() +
+  theme(legend.position="top")
+@
+
+
+%========================
+\section{Conclusion} \label{sec:conclusion}
+%========================
+
+The lack of accurate covariance estimates from the widely used mean-field
+variational Bayes (MFVB) methodology has been a longstanding shortcoming of
+MFVB. We have demonstrated that in sparse models, our method, linear response
+variational Bayes (LRVB), can correct MFVB to deliver these covariance estimates
+in time that scales linearly with the number of data points.  Furthermore, we
+provide an easy-to-use formula for applying LRVB to a wide range of inference
+problems.
+%
+Our experiments on a diverse set of models have demonstrated the efficacy of
+LRVB, and our detailed study of scaling of mixtures of multivariate Gaussians
+shows that LRVB can be considerably faster than traditional MCMC methods. We
+hope that in future work our results can be extended to more complex models,
+including Bayesian nonparametric models, where MFVB has proven its practical
+success.
+
+%========================
+\paragraph{Acknowledgments.}
+%========================
+
+The authors thank Alex Blocker for helpful comments.
+R.~Giordano and T.~Broderick were funded by Berkeley Fellowships.
+
+{\small
+\bibliographystyle{unsrt} % Previously used
+\bibliography{lrvb_nips}
+}
+
+
+%%%%%%%%%%%%%%%%%
+
+
+\include{appendix}
+
+\end{document}
