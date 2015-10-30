@@ -34,11 +34,21 @@ kSaveResults <- TRUE
 #######
 # Generate data
 
-n.range <- 5000
-k.range <- 2
-reps <- 2
-p.range <- c(2, 3, 4, 5, 7, 8, 9, 10, 12, 15, 18, 22)
-analysis.name <- "new_scaling_p"
+if (FALSE) {
+  n.range <- 5000
+  k.range <- 2
+  reps <- 4
+  p.range <- c(2, 3, 4, 5, 7, 8, 9, 10, 12, 15, 18, 22)
+  analysis.name <- "new_scaling_p"
+} else {
+  n.range <- c(2500, 5000, 10000, 25000, 50000, 100000)
+  k.range <- 3
+  reps <- 8
+  p.range <- 3
+  analysis.name <- "new_scaling_n"
+}
+
+
 
 anisotrophy <- 0
 vars.scale <- 0.4
