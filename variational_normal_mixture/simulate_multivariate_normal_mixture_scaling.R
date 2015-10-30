@@ -64,8 +64,9 @@ all.results <- foreach (p.index=1:length(p.range)) %dopar% {
         } else {
             # Gibbs is prohibitively slow on very large datasets.
             fit.gibbs <- FALSE
-         }
-        results <- SimulateAndFitMVNMixture(n, k, p, par,
+        }
+        priors <- DefaultPriors(p=p, k=k)
+        results <- SimulateAndFitMVNMixture(n, k, p, par, priors=priors,
                                             fit.vb=TRUE, fit.gibbs=fit.gibbs,
                                             n.gibbs.draws=n.gibbs.draws,
                                             burnin=burnin)

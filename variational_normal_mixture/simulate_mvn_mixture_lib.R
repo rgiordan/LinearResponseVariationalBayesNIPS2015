@@ -12,6 +12,36 @@ library(gridExtra)
 library(bayesm)
 library(MVNMixtureLRVB)
 
+
+DefaultPriors <- function(p, k, prior.obs=1, x.prior.scale=rep(10, p)) {
+  # Set some reasonably diffuse default priors.
+  mu.prior.mean  <- matrix(0, nrow=p, ncol=k)
+  if (p > 1) {
+    mu.prior.info.mat <- diag(x=prior.obs / (x.prior.scale ^ 2))    
+  } else {
+    # Seriously, R?  diag() of a single number is a 0x0 matrix.
+    mu.prior.info.mat <- matrix(prior.obs / (x.prior.scale ^ 2))
+  }
+  mu.prior.info <- matrix(ConvertSymmetricMatrixToVector(mu.prior.info.mat),
+                          nrow=matrix.size, ncol=k)
+  
+  # The lambda prior.
+  lambda.prior.n <- rep(prior.obs, k)
+  lambda.prior.v.inv.list <- list()
+  for (this.k in 1:k) {
+    lambda.prior.v.inv.list[[this.k]] <- prior.obs * diag(x.prior.scale ^ 2)
+  }
+  lambda.prior.v.inv <- VectorizeMatrixList(lambda.prior.v.inv.list)
+  
+  # More alpha prior mass helps with stability (especially for MCMC).
+  p.prior.alpha <- rep(5 * prior.obs, k)
+  priors <- list(mu.prior.mean=mu.prior.mean, mu.prior.info=mu.prior.info,
+                 lambda.prior.v.inv=lambda.prior.v.inv, lambda.prior.n=lambda.prior.n,
+                 p.prior.alpha=p.prior.alpha)
+  return(priors)
+}
+
+
 SimulateAndFitMVNMixture <- function(n, k, p, par,
                                      fit.vb=TRUE, fit.gibbs=TRUE,
                                      n.gibbs.draws=1e4, burnin=1000,
@@ -20,8 +50,9 @@ SimulateAndFitMVNMixture <- function(n, k, p, par,
   # Generate data
   data <- GenerateMultivariateData(n, par$true.means, par$true.sigma, par$true.probs)
   if (is.null(priors)) {
-    # Set broad data-based priors.
-    if (!quiet) print("Using data-based priors")
+    # Set broad data-based priors.  By using the data, we can avoid accidentally choosing
+    # informative prior variances due to unusually scaled data.
+    if (!quiet) print("Using data-based priors.")
     priors <- GenerateSamplePriors(x=data$x, k=k)
   }
   analysis.hash <- digest(list(data, par))
