@@ -108,7 +108,6 @@ SimulateAndFitMVNMixture <- function(n, k, p, par,
     # The priors cannot be exactly the same since I wrote the VB library with the
     # non-conjugate prior.  :(  (There is no need to use the conjugate prior with 
     # Gibbs or MFVB.)  Also, the rnmixGibbs prior is less flexible.
-    # I will try to get something reasonably close.
     prior.list <- list(ncomp=k,
                        Mubar=priors$mu.prior.mean[,1],
                        A=matrix(priors$mu.prior.info[1,1], 1, 1),

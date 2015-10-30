@@ -15,7 +15,8 @@ setwd(file.path(Sys.getenv("GIT_REPO_LOC"),
 kSaveResults <- FALSE
 filename.base <-
   paste("covariance_simulations_with_cov_",
-        "n10000_k2_p2_sims100_scale0.5_anisotropy1.0_6000draws", sep="")
+        "n10000_k2_p2_sims200_scale0.5_anisotropy1.0_10000draws", sep="")
+
 load(file.path("data", sprintf("%s.Rdata", filename.base)))
 analysis.metadata <- list()
 
@@ -98,7 +99,6 @@ covs.df.melt$parameter <- sub("^.*_", "", covs.df.melt$variable)
 covs.df.melt$method <- sub("_.*$", "", covs.df.melt$variable)
 core.covs.df <- dcast(covs.df.melt, sim + parameter ~ method)
 
-
 ggplot(core.covs.df) +
   geom_point(aes(x=gibbs, y=lrvb, color="lrvb"), size=2) +
   xlab("Gibbs off-diagonal covariance") + ylab("estimates") +
@@ -106,40 +106,3 @@ ggplot(core.covs.df) +
   geom_abline(aes(slope=1, intercept=0), color="gray") +
   geom_hline(aes(yintercept=0), color="gray") +
   geom_vline(aes(xintercept=0), color="gray")
-
-lrvb.cov <- sim.results[[1]]$lrvb.cov
-gibbs.cov <- sim.results[[1]]$gibbs.cov
-diag(lrvb.cov)
-
-# Timing plot
-timing.df <- data.frame(do.call(rbind,lapply(1:length(sim.results), GetTimingDf)))
-timing.df$sim <- 1:length(sim.results)
-timing.df <- filter(timing.df, sim %in% good.sims)
-timing.means <- colMeans(timing.df)
-cat(timing.means["vb.time"])
-cat(timing.means["gibbs.time"])
-
-
-# VB Plots
-vb.probs <- colMeans(vb.optimum$e.z)
-vb.sigma <- InvertLinearizedMatrices(vb.optimum$e.lambda)
-vb.data <- GenerateMultivariateData(1e4, vb.optimum$e.mu,
-                                    ListifyVectorizedMatrix(vb.sigma),
-                                    vb.probs)
-vb.x.df <- data.frame(vb.data$x)
-names(vb.x.df) <- df.col.names
-vb.means.df <- data.frame(t(vb.optimum$e.mu))
-names(vb.means.df) <- df.col.names
-if (p == 2) {
-  ggplot() +
-    geom_density2d(data=x.df, aes(x=X1, y=X2, color="true")) +
-    geom_density2d(data=vb.x.df, aes(x=X1, y=X2, color="vb fit")) +
-    geom_point(data=means.df, aes(x=X1, y=X2), color="red", size=5) +
-    geom_point(data=vb.means.df, aes(x=X1, y=X2), color="green", size=5)
-} else if (p == 1) {
-  ggplot() +
-    geom_density(data=x.df, aes(x=X1, color="true"), lwd=2) +
-    geom_density(data=vb.x.df, aes(x=X1, color="vb fit"), lwd=2) +
-    geom_vline(data=means.df, aes(xintercept=X1), color="red", size=1) +
-    geom_vline(data=vb.means.df, aes(xintercept=X1), color="green", size=1)
-}

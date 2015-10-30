@@ -856,23 +856,20 @@ grid.arrange(re.legend)
 %------------------------
 \paragraph{Model.}
 %
-Mixture models constitute some of the most popular models for MFVB
-application
-\cite{blei:2003:lda, blei:2006:dp}
-%\cite{blei:2006:dp}
-and are often used as an example of where MFVB covariance estimates may go awry
-\cite{bishop:2006:pattern, turner:2011:two}. Thus, we will consider in detail a
-Gaussian mixture model (GMM) consisting of a $K$-component mixture of
-$P$-dimensional multivariate normals with unknown component means, covariances,
-and weights. In what follows, the weight $\pi_k$ is the probability of the $k$th
-component, $\mu_k$ is the $P$-dimensional mean of the $k$th component, and
-$\Lambda_k$ is the $P \times P$ precision matrix of the $k$th component (so
-$\Lambda_k^{-1}$ is the covariance parameter).  $N$ is the number of data
-points, and $x_{n}$ is the $n$th observed $P$-dimensional data point. We employ
-the standard trick of augmenting the data generating process with the latent
-indicator variables $z_{nk}$, for $n=1,...,N$ and $k=1,...,K$, such that $z_{nk} =
-1$ implies $x_{n} \sim \gauss(\mu_k, \Lambda^{-1}_k)$. So the generative model
-is:
+Mixture models constitute some of the most popular models for MFVB application
+\cite{blei:2003:lda, blei:2006:dp} and are often used as an example of where
+MFVB covariance estimates may go awry \cite{bishop:2006:pattern,
+turner:2011:two}. Thus, we will consider in detail a Gaussian mixture model
+(GMM) consisting of a $K$-component mixture of $P$-dimensional multivariate
+normals with unknown component means, covariances, and weights. In what follows,
+the weight $\pi_k$ is the probability of the $k$th component, $\mu_k$ is the
+$P$-dimensional mean of the $k$th component, and $\Lambda_k$ is the $P \times P$
+precision matrix of the $k$th component (so $\Lambda_k^{-1}$ is the covariance
+parameter).  $N$ is the number of data points, and $x_{n}$ is the $n$th observed
+$P$-dimensional data point. We employ the standard trick of augmenting the data
+generating process with the latent indicator variables $z_{nk}$, for $n=1,...,N$
+and $k=1,...,K$, such that $z_{nk} = 1$ implies $x_{n} \sim \gauss(\mu_k,
+\Lambda^{-1}_k)$. So the generative model is:
 %
 \begin{align}
 P(z_{nk} = 1) = \pi_k, & \quad
@@ -919,7 +916,7 @@ cat("\\newcommand{\\MNISTTestError}{",
 <<load_normal_mixture_sims>>=
 
 # Load and pre-process the simulation results.
-simulation.name <- "with_cov_n10000_k2_p2_sims100_scale0.5_anisotropy1.0_6000draws"
+simulation.name <- "with_cov_n10000_k2_p2_sims200_scale0.5_anisotropy1.0_10000draws"
 load(sprintf("./data/covariance_simulations_%s.Rdata", simulation.name))
 
 GetSimDf <- function(i) {
