@@ -131,5 +131,5 @@ if (kSaveResults) {
   save(sim.list, timing.list, cov.list,
        sim.results,
        n, k, p, n.sims, vars.scale, anisotropy, par, n.gibbs.draws,
-       file=paste("covariance_simulations_with_cov_", analysis.name, ".Rdata", sep=""))
+       file=file.path("data", paste("covariance_simulations_with_cov_", analysis.name, ".Rdata", sep="")))
 }

@@ -29,6 +29,7 @@ opt <- parse_args(OptionParser(option_list=option_list))
 registerDoParallel(cores = opt$cores)
 
 kShowPlots <- FALSE
+kSaveResults <- TRUE
 
 #######
 # Generate data
@@ -79,5 +80,7 @@ all.results <- foreach (p.index=1:length(p.range)) %dopar% {
 }
 close(foreach.progress.file)
 
-save(all.results, n.range, k.range, p.range, reps,
-     file=paste(analysis.name, "Rdata", sep="."))
+if (kSaveResults) {
+  save(all.results, n.range, k.range, p.range, reps,
+       file=file.path("data", paste(analysis.name, "Rdata", sep=".")))
+}
