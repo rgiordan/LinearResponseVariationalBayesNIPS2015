@@ -1,17 +1,30 @@
+# This file reads in files of the form
+#   data/<analysis name>_<simulation id>.json,
+# ...for <simulation id> in <id_range>,
+# which are produced by regression_poisson_componentwise.jl,
+# and augments them with MCMC results on the same datasets.
+#
+# It produces files called
+#   data/<analysis name>_<id range>_theta_cov_results.csv
+#   data/<analysis name>_<id range>_theta_z_cov_results.csv
+# ...which can be processed by anlalyze_results.R and used in the paper.
+
 library(lme4)
 library(MCMCglmm)
 library(coda)
 library(jsonlite)
 
-base.dir <- "~/Documents/git_repos/variational_bayes/poisson_glmm/"
+base.dir <- file.path(Sys.getenv("GIT_REPO_LOC"),
+                      "LinearResponseVariationalBayesNIPS2015/",
+                      "poisson_glmm")
 setwd(base.dir)
 
 source(file.path(base.dir, "r_analysis/r_analysis_lib.R"))
 
 data.path <- file.path(base.dir, "data")
-#analysis.name <- "poisson_glmm"
-#analysis.name <- "poisson_glmm_low_epsilon"
+
 analysis.name <- "poisson_glmm_z_theta_cov"
+id_range = c(1, 100)
 
 save.results <- TRUE
 save.z <- TRUE
@@ -25,7 +38,6 @@ mcmc.iters <- 20000
 result.list <- list()
 theta.cov.list <- list()
 theta.z.cov.list <- list()
-id_range = c(1, 100)
 for (sim.id in id_range[1]:id_range[2]) {
   print(sprintf("Simulation %d", sim.id))
   filename <- sprintf("%s_%d.json", analysis.name, sim.id)
@@ -69,16 +81,9 @@ for (sim.id in id_range[1]:id_range[2]) {
     theta.cov.list[[length(theta.cov.list) + 1]] <-
       data.frame(sim.id=sim.id, method="mcmc", component=1:theta.cov.len,
                  x=as.numeric(mcmc.theta.cov))
-    
-    #plot(lrvb.theta.z.cov, mcmc.theta.z.cov); abline(0,1)
-    
-    #plot(mcmc.theta.cov, lrvb.theta.cov, col="red", pch="o")    
-    #points(mcmc.theta.cov, mfvb.theta.cov, col="blue")
-    #abline(0,1)
-  
   }
   
-  # # NB: Frequentist methods beat everything.
+  # # NB: Optimized frequentist methods beat everything on this problem.
   # d$c <- factor(1:nrow(d))
   # glmm.res <- glmer(y ~ x - 1 + (1|c), d, family=poisson)
   # summary(glmm.res)  
