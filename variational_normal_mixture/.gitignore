@@ -1,0 +1,8 @@
+!covariance_simulations*.Rdata
+*.e??????
+*.o??????
+*.Rout
+.RData
+.Rhistory
+.foreach_progress
+.foreach_progress_scaling

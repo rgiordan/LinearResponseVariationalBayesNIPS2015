@@ -1,0 +1,5 @@
+*ubyte
+!mnist_covariance_data.Rdata
+!full_mnist_*_features.Rdata
+#!0_1_full.data.25_lrvb_theta_cov.Rdata # This is too big too
+#!full.data.25_leverage_results.Rdata # This is too big

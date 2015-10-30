@@ -1,6 +1,7 @@
 
 using JuMP
 using ReverseDiffSparse
+using Compat
 
 # Define a model containing the full log likelihood of the normal poisson model.
 
@@ -82,7 +83,7 @@ type NormalPoissonModel
 		# Define the elbo.
 		@defNLExpr(loglik_z[i=1:n],
 				   e_tau * (-0.5 * e_z2[i] +
-				            e_z[i] * e_mu * x_vec[i] - 
+				            e_z[i] * e_mu * x_vec[i] -
 				            0.5 * e_mu2 * (x_vec[i] ^ 2)) +
 				   0.5 * e_log_tau -
 				   e_exp_z[i] + e_z[i] * y_vec[i]);
@@ -97,7 +98,7 @@ type NormalPoissonModel
 
 		m_func = ModelFunctions(m_full)
 		n_params = length(m_full.colVal)
-		
+
 		new(m_full, m_func, n, n_params, prior, x_vec, y_vec, e_mu, e_mu2, e_tau, e_log_tau, e_z, e_z2)
 	end
 end
@@ -168,7 +169,7 @@ function get_normal_variational_covariance(e_norm, e_norm2, e_col, e2_col)
 	# Get the covariance between the linear and quadratic terms.
 	this_cov = 2 * e_norm * norm_var
 	push!(norm_cov, (e_col, e2_col, this_cov))
-	push!(norm_cov, (e2_col, e_col, this_cov))			
+	push!(norm_cov, (e2_col, e_col, this_cov))
 
 	# Get the covariance between the quadratic terms.
 	this_cov = 2 * norm_var ^ 2 + 4 * norm_var * (e_norm ^ 2)
@@ -201,6 +202,3 @@ function get_variational_cov(m_np::NormalPoissonModel)
 	end
 	q_cov = sparse_mat_from_tuples(q_cov_tuples);
 end
-
-
-

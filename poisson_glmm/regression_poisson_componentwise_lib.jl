@@ -1,6 +1,7 @@
 using JuMP
 using ReverseDiffSparse
 using Ipopt
+
 #using NLopt
 
 # For now, define a bunch of stuff in the global namespace.

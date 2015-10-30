@@ -1,0 +1,10 @@
+*ubyte
+!mnist_covariance_data.Rdata
+!full_mnist_*_features.Rdata
+<<<<<<< HEAD
+#!0_1_full.data.25_lrvb_theta_cov.Rdata # This is too big too
+#!full.data.25_leverage_results.Rdata # This is too big
+=======
+!0_1_full.data.25_lrvb_theta_cov.Rdata
+!full.data.25_leverage_results.Rdata
+>>>>>>> 718cab0adf5e69816c438cf3b1913249247113c6
