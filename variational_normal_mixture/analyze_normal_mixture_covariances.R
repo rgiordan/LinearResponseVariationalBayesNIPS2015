@@ -34,6 +34,8 @@ min.eff.sizes <-
   summarize(min.effsize=min(gibbs.effsize))
 
 analysis.metadata$min.effsize <- 500
+#analysis.metadata$min.effsize <- 750
+
 good.sims <- filter(min.eff.sizes, min.effsize > analysis.metadata$min.effsize)$sim
 analysis.metadata$good.sims  <- length(good.sims)
 core.vars <- core.vars[names(core.vars) != "gibbs.effsize"]
@@ -46,7 +48,7 @@ core.vars.melt$parameter <- sub("\\_.*$", "", core.vars.melt$var)
 
 core.vars.df <- dcast(core.vars.melt, sim + var + parameter + measure ~ method)
 
-this.parameter <- "pi"
+this.parameter <- "mu"
 grid.arrange(
   ggplot(filter(core.vars.df, parameter == this.parameter, measure == "mean")) +
     geom_point(aes(x=truth, y=vb, color="vb"), size=3) +

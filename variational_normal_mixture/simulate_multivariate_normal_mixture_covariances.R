@@ -38,9 +38,9 @@ kSaveResults <- TRUE
 n <- 1e4
 k <- 2
 p <- 2
-n.sims <- 100
-burnin <- 200
-n.gibbs.draws <- 6e3
+n.sims <- 200
+burnin <- 1000
+n.gibbs.draws <- 1e4
 vars.scale <- 0.5
 anisotropy <- 1
 
