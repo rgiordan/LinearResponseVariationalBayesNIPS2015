@@ -16,6 +16,8 @@ setwd(file.path(Sys.getenv("GIT_REPO_LOC"),
                 "variational_normal_mixture"))
 source("simulate_mvn_mixture_lib.R")
 
+analysis.name <- "new_scaling_p"
+
 SafeGetNumericTiming <- function(results, field) {
   return(ifelse(is.null(results[[field]]), NA,
                 as.numeric(results[[field]], unit="secs")))
@@ -43,11 +45,11 @@ GetAllTimingDfs <- function(x) {
 }
 
 kSaveResults <- FALSE
-load("new_scaling_p.Rdata")
+load(file.path("data", paste(analysis.name, "Rdata", sep=".")))
+timing.results <- do.call(rbind, lapply(all.results, GetAllTimingDfs)) 
 
 timing.results <- group_by(timing.results, n, p, k) %>%
                   summarize(vb.time=mean(vb.time), lrvb.time=mean(lrvb.time),
-                            mle.time=mean(mle.time), mle.hess.time=mean(mle.hess.time),
                             gibbs.time=mean(gibbs.time), gibbs.effsize=mean(gibbs.effsize))
 timing.results$lrvb.proportion <- with(timing.results, lrvb.time / vb.time)
 timing.results$gibbs.scaled.time <- with(timing.results,
@@ -57,9 +59,12 @@ timing.melt$variable <- sub(".time$", "", timing.melt$variable)
 timing.melt <- timing.melt[!is.na(timing.melt$value), ]
 
 if (kSaveResults) {
-  write.csv(timing.melt, file="scaling_simulation_very_high_p.csv",
+  write.csv(timing.melt,
+            file=file.path("data", paste(analysis.name, "results.csv", sep="_")),
             quote=FALSE, row.names=FALSE)
 }
+
+# Only some of these graphs will make sense depending on which dataset you've loaded.
 
 # Plot the times for the covarainces and gibbs scaled by effective sample size.
 method.vars <- c("lrvb", "gibbs.scaled")
