@@ -44,6 +44,39 @@ n.gibbs.draws <- 6e3
 vars.scale <- 0.5
 anisotropy <- 1
 
+p <- ncol(x)
+n <- nrow(x)
+matrix.size <- (p * (p + 1)) / 2
+
+######################
+# Set the priors.
+prior.obs <- 1 # The number of equivalent observations in the prior.
+mu.prior.mean  <- matrix(0, nrow=p, ncol=k)
+x.prior.scale <- rep(10.0, p)
+if (p > 1) {
+  mu.prior.info.mat <- diag(x=prior.obs / (x.prior.scale ^ 2))    
+} else {
+  # Seriously, R?  diag() of a single number is a 0x0 matrix.
+  mu.prior.info.mat <- matrix(prior.obs / (x.prior.scale ^ 2))
+}
+mu.prior.info <- matrix(ConvertSymmetricMatrixToVector(mu.prior.info.mat),
+                        nrow=matrix.size, ncol=k)
+
+# The lambda prior.
+lambda.prior.n <- rep(prior.obs, k)
+lambda.prior.v.inv.list <- list()
+for (this.k in 1:k) {
+  lambda.prior.v.inv.list[[this.k]] <- prior.obs * diag(x.prior.scale ^ 2)
+}
+lambda.prior.v.inv <- VectorizeMatrixList(lambda.prior.v.inv.list)
+
+p.prior.alpha <- rep(5, k)
+priors <- list(mu.prior.mean=mu.prior.mean, mu.prior.info=mu.prior.info,
+               lambda.prior.v.inv=lambda.prior.v.inv, lambda.prior.n=lambda.prior.n,
+               p.prior.alpha=p.prior.alpha)
+
+#####################
+# Run the analysis.
 analysis.name <- sprintf("n%d_k%d_p%d_sims%d_scale%0.1f_anisotropy%0.1f_%ddraws",
                          n, k, p, n.sims, vars.scale, anisotropy, n.gibbs.draws)
 
@@ -77,7 +110,7 @@ sim.results <- foreach(sim=1:n.sims) %dopar% {
     }
   }
 
-  results <- SimulateAndFitMVNMixture(n, k, p, par,
+  results <- SimulateAndFitMVNMixture(n, k, p, par, priors=priors,
                                       fit.vb=TRUE, fit.gibbs=TRUE,
                                       n.gibbs.draws=n.gibbs.draws,
                                       burnin=burnin)

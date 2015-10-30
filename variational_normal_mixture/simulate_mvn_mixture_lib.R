@@ -12,18 +12,18 @@ library(gridExtra)
 library(bayesm)
 library(MVNMixtureLRVB)
 
-base.dir <- file.path(Sys.getenv("GIT_REPO_LOC"),
-                                  "LinearResponseVariationalBayesNIPS2015/",
-                                  "variational_normal_mixture"))
-
 SimulateAndFitMVNMixture <- function(n, k, p, par,
                                      fit.vb=TRUE, fit.gibbs=TRUE,
                                      n.gibbs.draws=1e4, burnin=1000,
-                                     quiet=TRUE) {
+                                     quiet=TRUE, priors=NULL) {
 
   # Generate data
   data <- GenerateMultivariateData(n, par$true.means, par$true.sigma, par$true.probs)
-  priors <- GenerateSamplePriors(x=data$x, k=k)
+  if (is.null(priors)) {
+    # Set broad data-based priors.
+    if (!quiet) print("Using data-based priors")
+    priors <- GenerateSamplePriors(x=data$x, k=k)
+  }
   analysis.hash <- digest(list(data, par))
 
   true.means <- par$true.means
@@ -72,7 +72,17 @@ SimulateAndFitMVNMixture <- function(n, k, p, par,
 
     gibbs.time <- Sys.time()
     # Fit the normal mixture
-    prior.list <- list(ncomp=k)
+    
+    # The priors cannot be exactly the same since I wrote the VB library with the
+    # non-conjugate prior.  :(  (There is no need to use the conjugate prior with 
+    # Gibbs or MFVB.)  Also, the rnmixGibbs prior is less flexible.
+    # I will try to get something reasonably close.
+    prior.list <- list(ncomp=k,
+                       Mubar=priors$mu.prior.mean[,1],
+                       A=matrix(priors$mu.prior.info[1,1], 1, 1),
+                       nu=priors$lambda.prior.n[1],
+                       V=solve(ConvertVectorToSymmetricMatrix(priors$lambda.prior.v.inv[,1])),
+                       a=priors$p.prior.alpha)
     out <- rnmixGibbs(Data=list(y=data$x),
                       Prior=prior.list,
                       Mcmc=list(R=n.gibbs.draws + burnin, keep=1))
@@ -124,9 +134,6 @@ SimulateAndFitMVNMixture <- function(n, k, p, par,
               true.means=true.means, true.lambda=true.lambda, true.probs=true.probs,
               vb.optimum=vb.optimum, theta.cov=theta.cov, lrvb.theta.cov=lrvb.theta.cov,
               lrvb.time=lrvb.time, vb.opt.time=vb.opt.time, vb.time=vb.time,
-              mle.optim=mle.optim, mle.cov=mle.cov,
-              mle.opt.time=mle.opt.time, mle.hess.time=mle.hess.time, mle.time=mle.time,
-              mh.moments=mh.moments, core.mh.moments=core.mh.moments, mh.time=mh.time,
               core.gibbs.results=core.gibbs.results, core.gibbs.effsize=core.gibbs.effsize,
               core.gibbs.cov=core.gibbs.cov, gibbs.time=gibbs.time))
 }
