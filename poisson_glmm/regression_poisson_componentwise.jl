@@ -1,31 +1,10 @@
 # This is only designed for Julia 0.3
 @assert VERSION < v"0.4.0-dev"
 
-install_packages = false
-if install_packages
-	# Pkg.available() doesn't pick up cloned packages.
-	available_packages = keys(Pkg.installed())
-	required_packages =
-		["DataFrames", "Distributions", "JSON",
-		 "JuMP", "Ipopt", "ReverseDiffSparse", "Compat"]
-	for package in setdiff(required_packages, available_packages)
-		Pkg.add(package)
-	end
-
-	# This package hasn't been released yet.
-	if !("DataFramesIO" in available_packages)
-		Pkg.clone("https://github.com/johnmyleswhite/DataFramesIO.jl")
-	end
-end
-
-#using JuMP
-#using ReverseDiffSparse
-
 using DataFrames
 import Distributions
 import JSON
 import DataFramesIO
-#import PyPlot
 
 # The environment variable GIT_REPO_LOC must be set to the place where you
 # cloned the repository.

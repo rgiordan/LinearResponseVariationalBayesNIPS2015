@@ -1,3 +1,6 @@
+# This is only designed for Julia 0.3
+@assert VERSION < v"0.4.0-dev"
+
 using Distributions
 using DataFrames
 using JuMP
@@ -5,9 +8,15 @@ using JuMP
 import DataFramesIO
 import JSON
 
-using PyPlot
+# The environment variable GIT_REPO_LOC must be set to the place where you
+# cloned the repository.
+library_location =
+	joinpath(ENV["GIT_REPO_LOC"],
+				 	 "LinearResponseVariationalBayesNIPS2015/linear_regression/")
 
-include("random_effects_regression_lib.jl")
+data_path = joinpath(library_location, "data")
+
+include(joinpath(library_location, "random_effects_regression_lib.jl"))
 
 # Objects to export to R.
 function build_dict(objs)
@@ -36,9 +45,6 @@ export_symbols = [:df_json,
 
 # Because of how eval() only works in the global scope,
 # these variables must be declared globally for this to work.
-# There is a fix with @debug which I should implement. but
-# in the meantime this works.  See
-# http://stackoverflow.com/questions/30552637/populating-a-julia-dictionary-with-an-array-of-symbols
 for symb in export_symbols
 	@eval $symb = 0
 end
@@ -52,8 +58,6 @@ end
 
 #############################
 # Run the simulations
-
-const data_path = "/home/rgiordan/Documents/git_repos/variational_bayes/linear_regression/data"
 
 analysis_name = "re_regression_full_cov"
 
@@ -87,7 +91,7 @@ for sim_id = 1:n_sims
 	println("------------------------------")
 
 	true_nu = rand_bound(0.5, 4.0)
-	true_beta = Float64[ rand_bound(0.0, 3.0) for k=1:k_tot ] 
+	true_beta = Float64[ rand_bound(0.0, 3.0) for k=1:k_tot ]
 	true_gamma = rand(Normal(0, 1 / sqrt(true_nu)), re_num)
 
 	true_tau = rand_bound(0.2, 1.0)
@@ -95,8 +99,9 @@ for sim_id = 1:n_sims
 	row_offset = Float64[ dot(x[i, :][:], true_beta) + true_gamma[re_ind[i]] * z[i] for i=1:n];
 	y = Float64[ rand(Normal(row_offset[i], 1 / sqrt(true_tau))) for i=1:n ];
 
-	priors = Priors(beta_prior_mean, beta_prior_info, tau_prior_alpha, tau_prior_gamma,
-		            nu_prior_alpha, nu_prior_gamma)
+	priors = Priors(beta_prior_mean, beta_prior_info,
+	                tau_prior_alpha, tau_prior_gamma,
+		              nu_prior_alpha, nu_prior_gamma)
 
 	# Unfortunately, you can't see to change y, x, and z in vb_reg and have
 	# them be re-used in a new regression.  So we pay the model building price
@@ -163,7 +168,7 @@ for sim_id = 1:n_sims
 	main_i = setdiff(1:length(vb_reg.m.colVal), [gamma_i, gamma2_i, beta2_i])
 	mfvb_cov_main = full(mfvb_cov[main_i, main_i]);
 	lrvb_cov_main = full(lrvb_cov[main_i, main_i]);
-	
+
 	if export_data
 		# Save the data in JSON so R can do its thing.
 

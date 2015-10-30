@@ -1,16 +1,6 @@
-#module VBRERegression
-
 using JuMP
 using Distributions
 using MathProgBase
-
-export Priors, VBRandomEffectsRegression
-export set_beta, set_tau, set_nu, set_gamma
-export get_e_beta, get_e_beta2, get_e_gamma, get_e_tau
-export get_loglik, get_loglik_deriv, get_loglik_deriv!, get_loglik_hess
-export fit_model, get_variational_covariance, get_lrvb_cov
-export get_beta_ind_model, get_beta2_ind_model
-export get_gamma_ind_model, get_gamma2_ind_model
 
 type Priors
 	beta_prior_mean::Array{Float64, 1}
@@ -62,9 +52,9 @@ type VBRandomEffectsRegression
 		# The model is y_i = x_i beta + z_i gamma_re_ind[i] + epsilon_i
 		# Currently only scalar z_i are supported.
 
-		n = size(x)[1]		
+		n = size(x)[1]
 		k_tot = size(x)[2]
-		k_ud = k_tot * (k_tot + 1) / 2
+		k_ud = int(k_tot * (k_tot + 1) / 2)
 		re_num = maximum(re_ind)
 
 		# Make an array for indexing into the e_beta2_ud variable.
@@ -146,7 +136,7 @@ type VBRandomEffectsRegression
 		# Set up the evaluator object.  This can be slow.
 		println("Setting up the evaulator object.  (This parses the model and can be slow.)")
 		m_const_mat = JuMP.prepConstrMatrix(m);
-		m_eval = JuMP.JuMPNLPEvaluator(m, m_const_mat);
+		m_eval = JuMP.JuMPNLPEvaluator(m);
 		MathProgBase.initialize(m_eval, [:ExprGraph, :Grad, :Hess])
 
 		# Structures for the hessian.
@@ -173,7 +163,7 @@ function set_beta(beta::Array{Float64, 1}, vb_reg::VBRandomEffectsRegression; be
 	# variance added to beta2 to avoid singularity.
 	for k=1:vb_reg.k_tot
 		setValue(vb_reg.e_beta[k], beta[k])
-	end	
+	end
 
 	beta2 = beta * beta' + beta2_eps * eye(vb_reg.k_tot)
 	for k1=1:vb_reg.k_tot, k2=1:k1
@@ -269,7 +259,7 @@ end
 
 ###################################
 # Get the variational updates using
-# the derivatives of the log likelihood. 
+# the derivatives of the log likelihood.
 
 function get_beta_natural_parameters(vb_reg::VBRandomEffectsRegression)
 	function unpack_ud_matrix(ud_vector)
@@ -318,7 +308,7 @@ function update_beta_params(vb_reg::VBRandomEffectsRegression)
 		setValue(vb_reg.e_beta[k1], e_beta_update[k1])
 	end
 
-	for k2=1:1:vb_reg.k_tot, k1=1:k2 
+	for k2=1:1:vb_reg.k_tot, k1=1:k2
 		setValue(vb_reg.e_beta2_ud[vb_reg.beta2_ind[k1, k2]],
 			     e_beta2_ud_update[k1, k2])
 	end
@@ -392,8 +382,8 @@ function get_nu_natural_parameters(vb_reg::VBRandomEffectsRegression)
 	nu_alpha = vb_reg.grad[vb_reg.e_log_nu.col] + 1
 	nu_beta = -vb_reg.grad[vb_reg.e_nu.col]
 
-	@assert nu_alpha >= 0 
-	@assert nu_beta >= 0 
+	@assert nu_alpha >= 0
+	@assert nu_beta >= 0
 
 	nu_alpha, nu_beta
 end
@@ -483,7 +473,7 @@ function get_univariate_normal_variational_covariance(e_norm, e_norm2, e_col, e2
 	# Get the covariance between the linear and quadratic terms.
 	this_cov = 2 * e_norm * norm_var
 	push!(norm_cov, (e_col, e2_col, this_cov))
-	push!(norm_cov, (e2_col, e_col, this_cov))			
+	push!(norm_cov, (e2_col, e_col, this_cov))
 
 	# Get the covariance between the quadratic terms.
 	this_cov = 2 * norm_var ^ 2 + 4 * norm_var * (e_norm ^ 2)
@@ -498,7 +488,7 @@ function get_gamma_variational_covariance(vb_reg)
 		this_cov = get_univariate_normal_variational_covariance(
 			getValue(vb_reg.e_gamma[m]),
 			getValue(vb_reg.e_gamma2[m]),
-			vb_reg.e_gamma[m].col, vb_reg.e_gamma2[m].col) 
+			vb_reg.e_gamma[m].col, vb_reg.e_gamma2[m].col)
 		append!(gamma_cov, this_cov)
 	end
 	gamma_cov
@@ -581,8 +571,8 @@ end
 
 function sparse_mat_from_tuples(tup_array)
 	sparse(Int64[x[1] for x=tup_array],
-		   Int64[x[2] for x=tup_array],
-		   Float64[x[3] for x=tup_array])
+		     Int64[x[2] for x=tup_array],
+		     Float64[x[3] for x=tup_array])
 end
 
 function get_variational_covariance(vb_reg::VBRandomEffectsRegression)
@@ -605,5 +595,3 @@ function get_lrvb_cov(vb_reg::VBRandomEffectsRegression)
 
 	lrvb_cov
 end
-
-#end
