@@ -16,7 +16,8 @@ setwd(file.path(Sys.getenv("GIT_REPO_LOC"),
                 "variational_normal_mixture"))
 source("simulate_mvn_mixture_lib.R")
 
-analysis.name <- "new_scaling_p"
+#analysis.name <- "new_scaling_p"
+analysis.name <- "new_scaling_n"
 
 SafeGetNumericTiming <- function(results, field) {
   return(ifelse(is.null(results[[field]]), NA,

@@ -29,8 +29,8 @@
 \usepackage{amsthm}
 \usepackage{appendix}
 
-% break equations across pages
-\allowdisplaybreaks
+% Do not break equations across pages
+%\allowdisplaybreaks
 
 % Used to number single equations in an equation array.
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
@@ -123,11 +123,12 @@ UC Berkeley\\
 \maketitle
 
 \begin{abstract}
-Mean field variational Bayes (MFVB) is a popular posterior approximation
-method due to its fast runtime on large-scale data sets. However, it is well
-known that a major failing of MFVB is that it underestimates
-the uncertainty of model variables (sometimes severely)
-and provides no information about model variable covariance.
+
+Mean field variational Bayes (MFVB) is a popular posterior approximation method
+due to its fast runtime on large-scale data sets. However, a well known major
+failing of MFVB is that it underestimates the uncertainty of model variables
+(sometimes severely) and provides no information about model variable
+covariance.
 %
 We generalize linear response methods from statistical physics
 to deliver accurate uncertainty estimates for model
@@ -194,11 +195,11 @@ any model estimates---and to do so coherently across all of the model variables.
 a Bayesian posterior distribution, has grown in
 popularity due to its fast runtime on large-scale data sets
 \cite{blei:2003:lda, blei:2006:dp, hoffman:2013:stochastic}.
-But it is well known that a major failing of MFVB is that it gives
+But a well known major failing of MFVB is that it gives
 underestimates of the uncertainty of model variables that can be arbitrarily
 bad, even when approximating a simple multivariate Gaussian distribution
 \citep{mackay:2003:information,bishop:2006:pattern,turner:2011:two}.
-And MFVB provides no information about how
+Also, MFVB provides no information about how
 the uncertainties in different model variables interact
 \cite{wang:2005:inadequacy, bishop:2006:pattern, rue:2009:approximate, turner:2011:two}.
 
@@ -339,8 +340,8 @@ In MFVB, $\vbcov$ may be a poor estimator of $\truecov$, even when $\mpopt
 \cite{wang:2005:inadequacy, bishop:2006:pattern, turner:2011:two}. Our goal is
 to use the MFVB solution and linear response methods to construct an improved
 estimator for $\truecov$.  We will focus on the covariance of the natural
-$\theta$ for simplicity, though the covariance of smooth functions of $\theta$
-can be estimated similarly (\app{function_covariance}).
+sufficient statistic $\theta$, though the covariance of functions of $\theta$
+can be estimated similarly (see \app{function_covariance}).
 
 The essential idea of linear response is to perturb the first-order condition
 $M(\mpopt) = \mpopt$ around its optimum. In particular, define the distribution
@@ -410,8 +411,8 @@ $q^{*}$ is at least a local maximum of $E$.
 
 We can further simplify \eq{gen_lrcov} by using the exponential family form of
 the variational approximating distribution $q$. For $q$ in exponential family
-form as above, the entropy $S$ is dual to the log partition function $A$
-\cite{wainwright2008graphical}, so $S = -\npq^T \mpq + A(\npq)$; hence,
+form as above, the negative entropy $-S$ is dual to the log partition function
+$A$ \cite{wainwright2008graphical}, so $S = -\npq^T \mpq + A(\npq)$; hence,
 %
 $$
   \frac{dS}{dm}
@@ -428,9 +429,9 @@ with the frequentist ``supplemented expectation-maximization'' procedure see
 \begin{align}
   \nonumber
   \lrcov = -\left(\frac{\partial^2 L}{\partial m \partial m^T} + \frac{\partial^2 S}{\partial m \partial m^T}\right)^{-1}
-    &= (V^{-1} - H)^{-1}, \textrm{ for } H := \frac{\partial^2 L}{\partial m \partial m^T}.\\
+    &= -(H - V^{-1})^{-1}, \textrm{ for } H := \frac{\partial^2 L}{\partial m \partial m^T}.  \Rightarrow\\
   \label{eq:spec_lrvb}
-  \textrm{I.e, } \lrcov &= (I - VH)^{-1} V.
+  \lrcov &= (I - VH)^{-1} V.
 \end{align}
 
 When the true posterior $p(\theta | x)$ is in the exponential family and
@@ -441,7 +442,6 @@ Furthermore, even when the variational assumptions fail, as long as certain mean
 parameters are estimated exactly, then this formula is also exact for
 covariances. E.g., notably, MFVB is well-known to provide arbitrarily bad
 estimates of the covariance of a multivariate normal posterior
-%\cite{wang:2005:inadequacy,bishop:2006:pattern,turner:2011:two},
 \cite{mackay:2003:information,wang:2005:inadequacy,bishop:2006:pattern,turner:2011:two},
 but since MFVB estimates the means exactly, LRVB estimates the covariance exactly
 (see~\app{mvn_exact}).
@@ -488,13 +488,13 @@ requires only an $\alpha$-sized inverse.
 %========================
 
 We compare the covariance estimates from LRVB and MFVB in a range of models,
-including models both with and without conjugacy. We demonstrate the superiority
+including models both with and without conjugacy
+\footnote{All the code is available on our Github repository,
+\href{https://github.com/rgiordan/LinearResponseVariationalBayesNIPS2015}{\texttt{rgiordan/LinearResponseVariationalBayesNIPS2015}},
+}.
+We demonstrate the superiority
 of the LRVB estimate to MFVB in all models before focusing in on Gaussian
-mixture models for a more detailed scalability analysis
-\footnote{All the
-code is available on our
-\href{https://github.com/rgiordan/LinearResponseVariationalBayesNIPS2015}{Github repository},
-\texttt{rgiordan/LinearResponseVariationalBayesNIPS2015}}.
+mixture models for a more detailed scalability analysis.
 
 For each model, we simulate datasets with a range of parameters.  In the graphs,
 each point represents the outcome from a single simulation.  The horizontal axis
@@ -1106,11 +1106,11 @@ were estimated correctly by both and are not shown.
 <<scaling.data>>=
 # Load the scaling data.
 # TODO: Make sure it's clear how to generate this from the new repo.
-load("./data/scaling_simulation_more.Rdata")
-timing.melt <- timing.melt[!is.na(timing.melt$value), ]
+#load("./data/scaling_simulation_more.Rdata")
+#timing.melt <- timing.melt[!is.na(timing.melt$value), ]
 
-# TODO: Make sure the new filename works.
-#gmm.scaling.p <- read.csv("data/scaling_simulation_very_high_p.csv", header=T)
+load("./data/new_scaling_n.Rdata")
+gmm.scaling.n <- read.csv("data/new_scaling_n_results.csv", header=T)
 gmm.scaling.p <- read.csv("data/new_scaling_p_results.csv", header=T)
 @
 
@@ -1180,23 +1180,23 @@ often orders of magnitude faster.
 # Note that I just chose the intercepts for the y = ax lines by hand.
 method.vars <- c("lrvb", "gibbs.scaled")
 method.labels <- c("LRVB", "Gibbs")
-ggplot(filter(timing.melt, variable %in% method.vars, p == 3)) +
+ggplot(filter(gmm.scaling.n, variable %in% method.vars, p == 3)) +
   geom_point(aes(x=n, y=value, color=variable), size=3) +
   geom_line(aes(x=n, y=value, color=variable)) +
   scale_color_discrete(name="Method:", limits=method.vars,
                        labels=method.labels) +
   xlab("Number of data points (N)") + ylab("Running time (seconds)") +
-  scale_x_log10(breaks=unique(timing.melt$n)[c(1, 3, 5)]) + scale_y_log10() +
+  scale_x_log10(breaks=unique(gmm.scaling.n$n)[c(1, 3, 5)]) + scale_y_log10() +
   geom_abline(aes(intercept=log10(3.162278e-05), slope=1)) +
   theme(legend.position="top")
 
-ggplot(filter(timing.melt, variable == "lrvb", p == 3)) +
+ggplot(filter(gmm.scaling.n, variable == "lrvb", p == 3)) +
   geom_point(aes(x=n, y=value, color=variable), size=3) +
   geom_line(aes(x=n, y=value, color=variable)) +
   scale_color_discrete(name="Method:", limits=method.vars,
                        labels=method.labels) +
   xlab("Number of data points (N)") + ylab("Running time (seconds)") +
-  #scale_x_log10(breaks=unique(timing.melt$n)) + scale_y_log10() +
+  #scale_x_log10(breaks=unique(gmm.scaling.n$n)) + scale_y_log10() +
   scale_x_continuous()  +
   geom_abline(aes(intercept=0, slope=3.162278e-05)) +
   theme(legend.position="top")
