@@ -4,8 +4,8 @@
 % Set to toggletrue to use arxiv formatting.
 \usepackage{etoolbox}
 \newtoggle{arxivformat}
-%\toggletrue{arxivformat}
-\togglefalse{arxivformat}
+\toggletrue{arxivformat}
+%\togglefalse{arxivformat}
 
 \iftoggle{arxivformat} {
   \usepackage{natbib}
@@ -116,7 +116,11 @@ UC Berkeley\\
 \newcommand{\fix}{\marginpar{FIX}}
 \newcommand{\new}{\marginpar{NEW}}
 
-\nipsfinalcopy % Uncomment for camera-ready version
+\iftoggle{arxivformat} {
+}{
+  \nipsfinalcopy % Uncomment for camera-ready version
+}
+
 
 \begin{document}
 

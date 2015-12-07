@@ -1,13 +1,12 @@
-This is BibTeX, Version 0.99d (TeX Live 2015/dev/Debian)
+This is BibTeX, Version 0.99d (TeX Live 2015/Debian)
 Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: lrvb_nips_arxiv.aux
 The style file: unsrt.bst
-A level-1 auxiliary file: appendix_arxiv.aux
 Database file #1: lrvb_nips_arxiv.bib
 Warning--empty publisher in turner:2011:two
 You've used 24 entries,
             1791 wiz_defined-function locations,
-            602 strings with 7274 characters,
+            601 strings with 7256 characters,
 and the built_in function-call counts, 5486 in all, are:
 = -- 508
 > -- 206
