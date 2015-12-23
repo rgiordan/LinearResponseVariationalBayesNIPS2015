@@ -57,11 +57,11 @@
 %\togglefalse{arxivformat}
 
 \iftoggle{arxivformat} {
-  \usepackage[sort&compress]{natbib}
+  \usepackage[sort&compress, numbers]{natbib}
   \usepackage{times}
 }{
   \usepackage{nips15submit_e,times}
-  \usepackage[sort&compress]{natbib}
+  \usepackage[sort&compress, numbers]{natbib}
 }
 
 \usepackage{hyperref}
@@ -74,8 +74,8 @@
 \usepackage{subcaption}
 \usepackage{caption}
 
-\usepackage{amsmath}
 \usepackage{amsthm}
+\usepackage{amsmath}
 \usepackage{appendix}
 
 % Do not break equations across pages
@@ -118,8 +118,9 @@
 \newcommand{\klshort}{E}
 
 % theorems
-%\theoremstyle{plain}
-%\newtheorem{theorem}{Theorem}[section]
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{remark}[theorem]{Remark}
@@ -1694,7 +1695,7 @@ The remaining $\Lambda$ derivatives are zero. The only nonzero second
 derivatives for $\log\pi$ are to $Z$ and are given by
 %
 \begin{eqnarray*}
-\frac{\partial^{2}H}{\partial\log\pi_{j}\partial z_{nk}} & = & 1
+\frac{\partial^{2}H}{\partial\log\pi_{k}\partial z_{nk}} & = & 1
 \end{eqnarray*}
 %
 Note in particular that $H_{zz} = 0$, allowing efficient calculation of
