@@ -4,8 +4,8 @@
 % Set to toggletrue to use arxiv formatting.
 \usepackage{etoolbox}
 \newtoggle{arxivformat}
-\toggletrue{arxivformat}
-%\togglefalse{arxivformat}
+%\toggletrue{arxivformat}
+\togglefalse{arxivformat}
 
 \iftoggle{arxivformat} {
   \usepackage{natbib}
