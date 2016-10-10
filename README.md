@@ -29,6 +29,10 @@ copied to the folder ```paper/data``` to be used to generate the exact plots in 
 The scripts require numerous external libraries.  The scripts ```install_julia_packages.jl```
 and ```install_R_packages.R``` should check your system and install any that are missing.
 
+Note that this paper was written using Julia v0.3.  Julia has changed dramatically since then
+and the paper code has not been actively maintained, so an older install of Julia will certainly
+be required.  If you have trouble and want help, please contact the authors.
+
 Interested users may also want to look at two other stand-alone repos:
 
 - [LinearResponseVariationalBayes.jl](https://github.com/rgiordan/LinearResponseVariationalBayes.jl),
@@ -36,4 +40,7 @@ Interested users may also want to look at two other stand-alone repos:
   on the work for this paper, and as of writing have not yet retrofitted the papers' models to use the new package.)
 - [MVNMixtureLRVB](https://github.com/rgiordan/MVNMixtureLRVB),
   an R package (mostly in C++) for fitting LRVB (and, consequently, MFVB) models in R.
+- [LinearResponseVariationalBayes.cpp](https://github.com/rgiordan/LinearResponseVariationalBayes.cpp), a C++
+  package reyling on Stan's autodifferentiation features that the authors are currently using instead of
+  Julia's autodifferentiation package, JUMP.
 
