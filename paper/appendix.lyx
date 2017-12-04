@@ -1,0 +1,4089 @@
+#LyX file created by tex2lyx 2.2
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin /home/rgiordan/Documents/git_repos/LinearResponseVariationalBayesNIPS2015/paper/
+\textclass article
+\use_default_options false
+\maintain_unincluded_children false
+\language english
+\language_package none
+\inputencoding auto
+\fontencoding default
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 0
+\use_package cancel 0
+\use_package esint 1
+\use_package mathdots 0
+\use_package mathtools 0
+\use_package mhchem 0
+\use_package stackrel 0
+\use_package stmaryrd 0
+\use_package undertilde 0
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+onecolumn
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+\start_of_appendix
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%dummy comment inserted by tex2lyx to ensure that this paragraph is not empty
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+iftoggle
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+arxivformat
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+% nothing
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset FormulaMacro
+\renewcommand{\appendixpagename}{Supplementary Material}
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+appendixpage
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+You can find this paper, as well as all the code necessary to run the described experiments, in our Github repo, 
+\begin_inset CommandInset href
+LatexCommand href
+name "texttt{rgiordan/LinearResponseVariationalBayesNIPS2015}"
+target "https://github.com/rgiordan/LinearResponseVariationalBayesNIPS2015"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%========================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+LRVB estimates of the covariance of functions
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset CommandInset label
+LatexCommand label
+name "app:function_covariance"
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%========================
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+mysec
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+lrsubsection
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+, we derived an estimate of the covariance of the natural sufficient statistics, 
+\begin_inset Formula $\theta$
+\end_inset
+
+, of our variational approximation, 
+\begin_inset Formula $q(\theta)$
+\end_inset
+
+. In this section we derive a version of 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+eq
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+speclrvb
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ for the covariance of functions of 
+\begin_inset Formula $\theta$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+We begin by estimating the covariance between 
+\begin_inset Formula $\theta$
+\end_inset
+
+ and a function 
+\begin_inset Formula $\phi(\theta)$
+\end_inset
+
+. Suppose we have an MFVB solution, 
+\begin_inset Formula $q(\theta)$
+\end_inset
+
+, to 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+eq
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+kl
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+. Define the expectation of 
+\begin_inset Formula $\phi(\theta)$
+\end_inset
+
+ to be 
+\begin_inset Formula $\mbeq\left[\phi(\theta)\right] :=
+f(m)$
+\end_inset
+
+. This expectation is function of 
+\begin_inset Formula $m$
+\end_inset
+
+ alone since 
+\begin_inset Formula $m$
+\end_inset
+
+ completely parameterizes 
+\begin_inset Formula $q$
+\end_inset
+
+. As in 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+eq
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+perturbeddens
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+, we can consider a perturbed log likelihood that also includes 
+\begin_inset Formula $f\left(m\right)$
+\end_inset
+
+: 
+\begin_inset Formula \begin{eqnarray*}
+  \log p_{t}\left(\theta\vert x \right) & = &
+    \log p+t_{0}^{T}m+t_{f}f\left(m\right):=\log p+t^{T}m_{f}\\
+  t & := & \left(\begin{array}{c}
+  t_{0}\\
+  t_{f}
+  \end{array}\right) \quad \quad
+  m_{f} := \left(\begin{array}{c}
+  m\\
+  f\left(m\right)
+  \end{array}\right)
+\end{eqnarray*}
+\end_inset
+
+Using the same reasoning that led to 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+eq
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+lrvbderivativedefn
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+, we will define 
+\begin_inset Formula \[
+\truecov_{\theta \phi} = \cov_p(\theta, \phi(\theta))
+  \approx \frac{dm_t^{*}}{dt_f} =: \lrcov_{\theta\phi}
+\]
+\end_inset
+
+We then have the following lemma: 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+begin{lemma}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:theta_function_covariance"
+
+\end_inset
+
+ If 
+\begin_inset Formula $\mbeq\left[\phi(\theta)\right] =: f(m)$
+\end_inset
+
+ is a differentiable function of 
+\begin_inset Formula $m$
+\end_inset
+
+ with gradient 
+\begin_inset Formula $\nabla f$
+\end_inset
+
+, then 
+\begin_inset Formula \[
+  \lrcov_{\theta\phi} = \lrcov \nabla f
+  \]
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+end{lemma}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+begin{proof}
+\end_layout
+
+\end_inset
+
+ The derivative of the perturbed ELBO, 
+\begin_inset Formula $E_t$
+\end_inset
+
+, is given by: 
+\begin_inset Formula \begin{eqnarray*}
+  E_{t} & := & E+t^{T}m_{f}\\
+  \frac{\partial E_{t}}{\partial m} & = &
+  \frac{\partial E}{\partial m}+\left(\begin{array}{cc}
+  I & \nabla f\end{array}\right)\left(\begin{array}{c}
+  t_{0}\\
+  t_{f}
+  \end{array}\right)\\
+  \end{eqnarray*}
+\end_inset
+
+The fixed point 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+eq
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+fixedpt
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ then gives: 
+\begin_inset Formula \begin{eqnarray*}
+  M_{t}\left(m\right) & := & M\left(m\right)+\left(\begin{array}{cc}
+  I & \nabla f\end{array}\right)\left(\begin{array}{c}
+  t_{0}\\
+  t_{f}
+  \end{array}\right)\\
+  \frac{dm_{t}^{*}}{dt^{T}} & = &
+    \left.\frac{\partial M_{t}}{\partial m^{T}}\right|_{_{m=m_{t}^{*}}}
+    \frac{dm_{t}^{*}}{dt^{T}}+\frac{\partial M_{t}}{\partial t^{T}}\\
+   & = & \left(\left.\frac{\partial M}{\partial m^{T}}\right|_{_{m=m_{t}^{*}}}+
+   \frac{\partial}{\partial m^{T}}\left(\begin{array}{cc}
+  I & \nabla f\end{array}\right)\left(\begin{array}{c}
+  t_{0}\\
+  t_{f}
+  \end{array}\right)\right)\frac{dm^{*}}{dt^{T}}+\left(\begin{array}{cc}
+  I & \nabla f\end{array}\right)
+  \end{eqnarray*}
+\end_inset
+
+The term 
+\begin_inset Formula $\frac{\partial}{\partial m^{T}}\left(\begin{array}{cc}
+  I & \nabla f\end{array}\right)\left(\begin{array}{c}
+  t_{0}\\
+  t_{f}
+  \end{array}\right)$
+\end_inset
+
+ is awkward, but it disappears when we evaluate at 
+\begin_inset Formula $t=0$
+\end_inset
+
+, giving 
+\begin_inset Formula \begin{eqnarray*}
+  \frac{dm_{t}^{*}}{dt^{T}} & = &
+    \left(\left.\frac{\partial M}{\partial m^{T}}\right|_{_{m=m_{t}^{*}}}\right)
+    \frac{dm^{*}}{dt^{T}}+\left(\begin{array}{cc}
+  I & \nabla f\end{array}\right)\\
+   & = & \left(\frac{\partial^{2}E}{\partial m\partial m^{T}}+
+    I\right)\frac{dm^{*}}{dt^{T}}+\left(\begin{array}{cc}
+  I & \nabla f\end{array}\right) \Rightarrow \\
+  \frac{dm^{*}}{dt^{T}} & = &
+    -\left(\frac{\partial^{2}E}{\partial m\partial m^{T}}\right)^{-1}
+    \left(\begin{array}{cc}I & \nabla f\end{array}\right)
+  \end{eqnarray*}
+\end_inset
+
+Recalling that 
+\begin_inset Formula \begin{eqnarray*}
+  \frac{dm^{*}}{dt_{0}^{T}} & := & \lrcov
+  \end{eqnarray*}
+\end_inset
+
+We can plug in to see that 
+\begin_inset Formula \begin{equation}
+  \lrcov_{\theta\phi} = \frac{dm^{*}}{dt_{f}} = \lrcov \nabla f
+  \end{equation}
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+end{proof}
+\end_layout
+
+\end_inset
+
+ Finally, suppose we are interested in estimating 
+\begin_inset Formula $\cov_p(\gamma(\theta),
+\phi(\theta))$
+\end_inset
+
+, where 
+\begin_inset Formula $g(m) := \mbeq\left[\gamma(\theta)\right]$
+\end_inset
+
+. Again using the same reasoning that led to 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+eq
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+lrvbderivativedefn
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+, we will define 
+\begin_inset Formula \begin{equation*}
+\truecov_{\gamma\phi} = \cov_p(\gamma(\theta), \phi(\theta))
+\approx \frac{d \mbeq\left[\gamma(\theta)\right]}{dt_f} =: \lrcov_{\gamma\phi}
+\end{equation*}
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+begin{proposition}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "prop:function_function_covariance"
+
+\end_inset
+
+ If 
+\begin_inset Formula $\mbeq\left[\phi(\theta)\right] = f(m)$
+\end_inset
+
+ and 
+\begin_inset Formula $\mbeq\left[\gamma(\theta)\right] = g(m)$
+\end_inset
+
+ are differentiable functions of 
+\begin_inset Formula $m$
+\end_inset
+
+ with gradients 
+\begin_inset Formula $\nabla f$
+\end_inset
+
+ and 
+\begin_inset Formula $\nabla g$
+\end_inset
+
+ respectively, then 
+\begin_inset Formula \[
+    \lrcov_{\gamma\phi} = \nabla g^{T}\lrcov \nabla f
+  \]
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+end{proposition}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+begin{proof}
+\end_layout
+
+\end_inset
+
+ By 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+lem
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+thetafunctioncovariance
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ an application of the chain rule, 
+\begin_inset Formula \begin{eqnarray*}
+  \lrcov_{\gamma\phi} =
+  \frac{d \mbeq\left[\gamma(\theta)\right]}{dt_f} =
+  \frac{d g\left(m\right)}{dt_f} & = & \frac{dg(m)}{dm^{T}}\frac{dm}{dt_{f}}
+    =  \nabla g^{T}\lrcov \nabla f
+  \end{eqnarray*}
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+end{proof}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%========================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+% 
+\backslash
+section{Constraints among natural parameteres or sufficient statistics}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+% 
+\backslash
+label{app:constraints}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%========================
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%========================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Exactness of LRVB for multivariate normal means
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset CommandInset label
+LatexCommand label
+name "app:mvn_exact"
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%========================
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For any target distribution 
+\begin_inset Formula $p(\theta | x)$
+\end_inset
+
+, it is well-known that MFVB cannot be used to estimate the covariances between the components of 
+\begin_inset Formula $\theta$
+\end_inset
+
+. In particular, if 
+\begin_inset Formula $q^*$
+\end_inset
+
+ is the estimate of 
+\begin_inset Formula $p(\theta | x)$
+\end_inset
+
+ returned by MFVB, 
+\begin_inset Formula $q^*$
+\end_inset
+
+ will have a block-diagonal covariance matrix—no matter the form of the covariance of 
+\begin_inset Formula $p(\theta | x)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Consider approximating a multivariate Gaussian posterior distribution 
+\begin_inset Formula $p(\theta|x)$
+\end_inset
+
+ with MFVB. The Gaussian is the unique distribution that is fully determined by its mean and covariance. This posterior arises, for instance, given a multivariate normal likelihood 
+\begin_inset Formula $p(x | \mu) = \prod_{n=1:N} \gauss(x_n |
+\mu, S)$
+\end_inset
+
+ with fixed covariance 
+\begin_inset Formula $S$
+\end_inset
+
+ and an improper uniform prior on the mean parameter 
+\begin_inset Formula $\mu$
+\end_inset
+
+. We make the mean field factorization assumption 
+\begin_inset Formula $q(\mu)=\prod_{d=1:D} q(\mu_d)$
+\end_inset
+
+, where 
+\begin_inset Formula $D$
+\end_inset
+
+ is the total dimension of 
+\begin_inset Formula $\mu$
+\end_inset
+
+. This fact is often used to illustrate the shortcomings of MFVB 
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "wang:2005:inadequacy,bishop:2006:pattern,turner:2011:two"
+
+\end_inset
+
+. In this case, it is well known that the MFVB posterior means are correct, but the marginal variances are underestimated if 
+\begin_inset Formula $S$
+\end_inset
+
+ is not diagonal. However, since the posterior means are correctly estimated, the LRVB approximation in 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+eq
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+speclrvb
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ is in fact an equality. That is, for this model, 
+\begin_inset Formula $\lrcov = d \mpq_t / d t^T = \truecov$
+\end_inset
+
+ exactly.
+\end_layout
+
+\begin_layout Standard
+In order to prove this result, we will rely on the following lemma. 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+begin{lemma}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:lrvb_mvn"
+
+\end_inset
+
+ Consider a target posterior distribution characterized by 
+\begin_inset Formula $p(\theta | x) =
+  \gauss(\theta | \mu, \Sigma)$
+\end_inset
+
+, where 
+\begin_inset Formula $\mu$
+\end_inset
+
+ and 
+\begin_inset Formula $\Sigma$
+\end_inset
+
+ may depend on 
+\begin_inset Formula $x$
+\end_inset
+
+, and 
+\begin_inset Formula $\Sigma$
+\end_inset
+
+ is invertible. Let 
+\begin_inset Formula $\theta = (\theta_{1}, \ldots, \theta_{J})$
+\end_inset
+
+, and consider a MFVB approximation to 
+\begin_inset Formula $p(\theta| x)$
+\end_inset
+
+ that factorizes as 
+\begin_inset Formula $q(\theta) =
+  \prod_{j} q(\theta_j)$
+\end_inset
+
+. Then the variational posterior means are the true posterior means; i.e. 
+\begin_inset Formula $m_j = \mu_j$
+\end_inset
+
+ for all 
+\begin_inset Formula $j$
+\end_inset
+
+ between 
+\begin_inset Formula $1$
+\end_inset
+
+ and 
+\begin_inset Formula $J$
+\end_inset
+
+. 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+end{lemma}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+begin{proof}
+\end_layout
+
+\end_inset
+
+ The derivation of MFVB for the multivariate normal can be found in Section 10.1.2 of 
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "bishop:2006:pattern"
+
+\end_inset
+
+; we highlight some key results here. Let 
+\begin_inset Formula $\Lambda = \Sigma^{-1}$
+\end_inset
+
+. Let the 
+\begin_inset Formula $j$
+\end_inset
+
+ index on a row or column correspond to 
+\begin_inset Formula $\theta_j$
+\end_inset
+
+, and let the 
+\begin_inset Formula $-j$
+\end_inset
+
+ index correspond to 
+\begin_inset Formula $\{\theta_{i}: i \in
+  [J]\setminus j\}$
+\end_inset
+
+. E.g., for 
+\begin_inset Formula $j=1$
+\end_inset
+
+, 
+\begin_inset Formula \[
+    \Lambda
+      = \left[ \begin{array}{ll}
+          \Lambda_{11} & \Lambda_{1,-1} \\
+          \Lambda_{-1,1} & \Lambda_{-1,-1}
+        \end{array} \right].
+  \]
+\end_inset
+
+By the assumption that 
+\begin_inset Formula $p(\theta | x) = \gauss(\theta | \mu, \Sigma)$
+\end_inset
+
+, we have 
+\begin_inset Formula \begin{eqnarray}\label{eq:mvn_variational_dist}
+  \lefteqn{\log p(\theta_{j} | \theta_{i \in [J]\setminus j}, x)} \nonumber\\
+      &=& -\frac{1}{2} (\theta_{j} - \mu_{j})^{T} \Lambda_{jj} (\theta_j - \mu_j) +
+         (\theta_{j} - \mu_{j})^{T} \Lambda_{j,-j} (\theta_{-j} - \mu_{-j}) + \constant,
+\end{eqnarray}
+\end_inset
+
+where the final term is constant with respect to 
+\begin_inset Formula $\theta_{j}$
+\end_inset
+
+. It follows that 
+\begin_inset Formula \begin{align*}
+    \log q^{*}_{j}(\theta_j)
+      &= \mbe_{q^{*}_{i}: i \in [J]\setminus j} \log p(\theta, x) + \constant \\
+      &= -\frac{1}{2} \theta_{j}^{T} \Lambda_{jj} \theta_j + \theta_j \mu_j \Lambda_{jj} - \theta_j \Lambda_{j,-j} (\mbe_{q^{*}} \theta_{-j} - \mu_{-j}).
+  \end{align*}
+\end_inset
+
+So 
+\begin_inset Formula \begin{equation*}
+    q^*_j(\theta_j) = \gauss(\theta_j | m_{j}, \Lambda_{jj}^{-1}),
+  \end{equation*}
+\end_inset
+
+with mean parameters 
+\begin_inset Formula \begin{equation} \label{eq:mvn_stable_point}
+    m_{j} = \mbe_{q^{*}_j} \theta_j = \mu_{j} - \Lambda_{jj}^{-1} \Lambda_{j,-j} (m_{-j} - \mu_{-j})
+  \end{equation}
+\end_inset
+
+as well as an equation for 
+\begin_inset Formula $\mbe_{q^{*}} \theta^T \theta$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Note that 
+\begin_inset Formula $\Lambda_{jj}$
+\end_inset
+
+ must be invertible, for if it were not, 
+\begin_inset Formula $\Sigma$
+\end_inset
+
+ would not be invertible.
+\end_layout
+
+\begin_layout Standard
+The solution 
+\begin_inset Formula $m = \mu$
+\end_inset
+
+ is a unique stable point for 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+eq
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+mvnstablepoint
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+, since the fixed point equations for each 
+\begin_inset Formula $j$
+\end_inset
+
+ can be stacked and rearranged to give 
+\begin_inset Formula \begin{eqnarray*}
+m-\mu & = & -\left[\begin{array}{ccccc}
+0 & \Lambda_{11}^{-1}\Lambda_{12} & \cdots & \Lambda_{11}^{-1}\Lambda_{1\left(J-1\right)} & \Lambda_{11}^{-1}\Lambda_{1J}\\
+\vdots &  & \ddots &  & \vdots\\
+\Lambda_{JJ}^{-1}\Lambda_{J1} & \Lambda_{JJ}^{-1}\Lambda_{J2} & \cdots & \Lambda_{JJ}^{-1}\Lambda_{J\left(J-1\right)} & 0
+\end{array}\right]\left(m-\mu\right)\\
+ & = & -\left[\begin{array}{ccccc}
+\Lambda_{11}^{-1} & \cdots & 0 & \cdots & 0\\
+\vdots & \ddots &  &  & \vdots\\
+0 &  & \ddots &  & 0\\
+\vdots &  &  & \ddots & \vdots\\
+0 & \cdots & 0 & \cdots & \Lambda_{JJ}^{-1}
+\end{array}\right]\left[\begin{array}{ccccc}
+0 & \Lambda_{12} & \cdots & \Lambda_{1\left(J-1\right)} & \Lambda_{1J}\\
+\vdots &  & \ddots &  & \vdots\\
+\Lambda_{J1} & \Lambda_{J2} & \cdots & \Lambda_{J\left(J-1\right)} & 0
+\end{array}\right]\left(m-\mu\right)\Leftrightarrow\\
+0 & = & \left[\begin{array}{ccccc}
+\Lambda_{11} & \cdots & 0 & \cdots & 0\\
+\vdots & \ddots &  &  & \vdots\\
+0 &  & \ddots &  & 0\\
+\vdots &  &  & \ddots & \vdots\\
+0 & \cdots & 0 & \cdots & \Lambda_{JJ}
+\end{array}\right]\left(m-\mu\right) +\\
+&& \left[\begin{array}{ccccc}
+0 & \Lambda_{12} & \cdots & \Lambda_{1\left(J-1\right)} & \Lambda_{1J}\\
+\vdots &  & \ddots &  & \vdots\\
+\Lambda_{J1} & \Lambda_{J2} & \cdots & \Lambda_{J\left(J-1\right)} & 0
+\end{array}\right]\left(m-\mu\right)\Leftrightarrow\\
+0 & = & \Lambda \left(m-\mu\right) \Leftrightarrow\\
+m & = & \mu.
+\end{eqnarray*}
+\end_inset
+
+The last step follows from the assumption that 
+\begin_inset Formula $\Sigma$
+\end_inset
+
+ (and hence 
+\begin_inset Formula $\Lambda$
+\end_inset
+
+) is invertible. It follows that 
+\begin_inset Formula $\mu$
+\end_inset
+
+ is the unique stable point of 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+eq
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+mvnstablepoint
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+end{proof}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%%%
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+begin{proposition}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "prop:lrvb_mvn"
+
+\end_inset
+
+ Assume we are in the setting of 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+lem
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+lrvbmvn
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+, where additionally 
+\begin_inset Formula $\mu$
+\end_inset
+
+ and 
+\begin_inset Formula $\Sigma$
+\end_inset
+
+ are on the interior of the feasible parameter space. Then the LRVB covariance estimate exactly captures the true covariance, 
+\begin_inset Formula $\hat{\Sigma} = \Sigma$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+end{proposition}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%%%
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+begin{proof}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Consider the perturbation for LRVB defined in 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+eq
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+perturbeddens
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+. By perturbing the log likelihood, we change both the true means 
+\begin_inset Formula $\mu_t$
+\end_inset
+
+ and the variational solutions, 
+\begin_inset Formula $m_t$
+\end_inset
+
+. The result is a valid density function since the original 
+\begin_inset Formula $\mu$
+\end_inset
+
+ and 
+\begin_inset Formula $\Sigma$
+\end_inset
+
+ are on the interior of the parameter space. By 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+lem
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+lrvbmvn
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+, the MFVB solutions are exactly the true means, so 
+\begin_inset Formula $m_{t,j} = \mu_{t,j}$
+\end_inset
+
+, and the derivatives are the same as well. This means that the first term in 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+eq
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+speclrvb
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ is not approximate, i.e. 
+\begin_inset Formula \begin{equation*}
+  \frac{d \mpq_{t}}{d t^{T}}
+    = \frac{d}{d t^{T}} \mbe_{p_{t}} \theta
+    = \truecov_{t},
+  \end{equation*}
+\end_inset
+
+It follows from the arguments above that the LRVB covariance matrix is exact, and 
+\begin_inset Formula $\hat{\Sigma} = \Sigma$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+end{proof}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%%%%%%%%%%%%%%%%%%%
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Comparison with supplemented expectation-maximization
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset CommandInset label
+LatexCommand label
+name "app:SEM"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The result in 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+app
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+mvnexact
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ about the multivariate normal distribution draws a connection between LRVB corrections and the 
+\begin_inset Quotes eld
+\end_inset
+
+supplemented expectation-maximization
+\begin_inset Quotes erd
+\end_inset
+
+ (SEM) method of 
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "meng:1991:using"
+
+\end_inset
+
+. SEM is an asymptotically exact covariance correction for the EM algorithm that transforms the full-data Fisher information matrix into the observed-data Fisher information matrix using a correction that is formally similar to 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+eq
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+speclrvb
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+. In this section, we argue that this similarity is not a coincidence; in fact the SEM correction is an asymptotic version of LRVB with two variational blocks, one for the missing data and one for the unknown parameters.
+\end_layout
+
+\begin_layout Standard
+Although LRVB as described here requires a prior (unlike SEM, which supplements the MLE), the two covariance corrections coincide when the full information likelihood is approximately log quadratic and proportional to the posterior, 
+\begin_inset Formula $p(\theta \vert x)$
+\end_inset
+
+. This might be expected to occur when we have a large number of independent data points informing each parameter—i.e., when a central limit theorem applies and the priors do not affect the posterior. In the full information likelihood, some terms may be viewed as missing data, whereas in the Bayesian model the same terms may be viewed as latent parameters, but this does not prevent us from formally comparing the two methods.
+\end_layout
+
+\begin_layout Standard
+We can draw a term-by-term analogy with the equations in 
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "meng:1991:using"
+
+\end_inset
+
+. We denote variables from the SEM paper with a superscript 
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Formula $SEM$
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+ to avoid confusion. MFVB does not differentiate between missing data and parameters to be estimated, so our 
+\begin_inset Formula $\theta$
+\end_inset
+
+ corresponds to 
+\begin_inset Formula $(\theta^{SEM}, Y_{mis}^{SEM})$
+\end_inset
+
+ in 
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "meng:1991:using"
+
+\end_inset
+
+. SEM is an asymptotic theory, so we may assume that 
+\begin_inset Formula $(\theta^{SEM}, Y_{mis}^{SEM})$
+\end_inset
+
+ have a multivariate normal distribution, and that we are interested in the mean and covariance of 
+\begin_inset Formula $\theta^{SEM}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+In the E-step of 
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "meng:1991:using"
+
+\end_inset
+
+, we replace 
+\begin_inset Formula $Y_{mis}^{SEM}$
+\end_inset
+
+ with its conditional expectation given the data and other 
+\begin_inset Formula $\theta^{SEM}$
+\end_inset
+
+. This corresponds precisely to 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+eq
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+mvnstablepoint
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+, taking 
+\begin_inset Formula $\theta_j = Y_{mis}^{SEM}$
+\end_inset
+
+. In the M-step, we find the maximum of the log likelihood with respect to 
+\begin_inset Formula $\theta^{SEM}$
+\end_inset
+
+, keeping 
+\begin_inset Formula $Y_{mis}^{SEM}$
+\end_inset
+
+ fixed at its expectation. Since the mode of a multivariate normal distribution is also its mean, this, too, corresponds to 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+eq
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+mvnstablepoint
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+, now taking 
+\begin_inset Formula $\theta_j = \theta^{SEM}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+It follows that the MFVB and EM fixed point equations are the same; i.e., our 
+\begin_inset Formula $M$
+\end_inset
+
+ is the same as their 
+\begin_inset Formula $M^{SEM}$
+\end_inset
+
+, and our 
+\begin_inset Formula $\partial M / \partial m$
+\end_inset
+
+ of 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+eq
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+dMdt
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ corresponds to the transpose of their 
+\begin_inset Formula $DM^{SEM}$
+\end_inset
+
+, defined in 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+eqw
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+2.2.1
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ of 
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "meng:1991:using"
+
+\end_inset
+
+. Since the 
+\begin_inset Quotes eld
+\end_inset
+
+complete information
+\begin_inset Quotes erd
+\end_inset
+
+ corresponds to the variance of 
+\begin_inset Formula $\theta^{SEM}$
+\end_inset
+
+ with fixed values for 
+\begin_inset Formula $Y_{OBS}^{SEM}$
+\end_inset
+
+, this is the same as our 
+\begin_inset Formula $\Sigma_{q^*,11}$
+\end_inset
+
+, the variational covariance, whose inverse is 
+\begin_inset Formula $I_{oc}^{-1}$
+\end_inset
+
+. Taken all together, this means that equation (2.4.6) of 
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "meng:1991:using"
+
+\end_inset
+
+ can be re-written as our 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+eq
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+speclrvb
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+. 
+\begin_inset Formula \begin{align*}
+V^{SEM} =& I_{oc}^{-1} \left(I - DM^{SEM}\right)^{-1} \Rightarrow\\
+\Sigma =& \vbcov \left(I - \left(\frac{\partial M}{\partial m^T}\right)^T \right)^{-1}
+       = \left(I - \frac{\partial M}{\partial m^T} \right)^{-1} \vbcov
+\end{align*}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%======================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Normal-Poisson details
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset CommandInset label
+LatexCommand label
+name "app:np_details"
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%======================
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In this section, we use this model to provide a detailed, step-by-step description of a simple LRVB analysis.
+\end_layout
+
+\begin_layout Standard
+The full joint distribution for the model in 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+eq
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+pnmodel
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ is 
+\begin_inset Formula \begin{align*}
+\log p\left(y,z,\beta,\tau\right) &= \sum_{n=1}^{N}\left(-\frac{1}{2}\tau z_{n}^{2}+x_{n}\tau\beta z_{n}-\frac{1}{2}x_{n}^{2}\tau\beta^{2}-\frac{1}{2}\log\tau\right)\\
+ &+\sum_{n=1}^{N}\left(-\exp\left(z_{n}\right)+z_{n}y_{n}\right)
+ -\frac{1}{2\sigma_{\beta}^{2}}\beta^{2}+\left(\alpha_{\tau}-1\right)\log\tau-\beta_{\tau}\tau+\constant
+\end{align*}
+\end_inset
+
+We find a mean-field approximation under the factorization 
+\begin_inset Formula $q\left(\beta,\tau,z\right) =
+q\left(\beta\right)q\left(\tau\right)\prod_{n=1}^{N}q\left(z_{n}\right)$
+\end_inset
+
+. By inspection, the log joint is quadratic in 
+\begin_inset Formula $\beta$
+\end_inset
+
+, so the optimal 
+\begin_inset Formula $q\left(\beta\right)$
+\end_inset
+
+ will be Gaussian 
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "bishop:2006:pattern"
+
+\end_inset
+
+. Similarly, the log joint is a function of 
+\begin_inset Formula $\tau$
+\end_inset
+
+ only via 
+\begin_inset Formula $\tau$
+\end_inset
+
+ and 
+\begin_inset Formula $\log\tau$
+\end_inset
+
+, so the optimal 
+\begin_inset Formula $q\left(\tau\right)$
+\end_inset
+
+ will be gamma. However, the joint does not take a standard exponential family form in 
+\begin_inset Formula $z_n$
+\end_inset
+
+: 
+\begin_inset Formula \[
+  \log p\left(z_{n}\vert y,\beta,\tau\right) = \left(x_{n}\tau\beta+y_{n}\right)z_{n}-\frac{1}{2}\tau z_{n}^{2}-\exp\left(z_{n}\right)+\constant
+\]
+\end_inset
+
+The difficulty is with the term 
+\begin_inset Formula $\exp\left(z_{n}\right)$
+\end_inset
+
+. So we make the further restriction that 
+\begin_inset Formula \[
+  q\left(z_{n}\right) = \gauss\left(\cdot\right)=q\left(z_{n};\mbe\left[z_{n}\right],\mbe\left[z_{n}^{2}\right]\right).
+\]
+\end_inset
+
+Fortunately, the troublesome term has an analytic expectation, as a function of the mean parameters, under this variational posterior: 
+\begin_inset Formula \[
+  \mbeq\left[\exp\left(z_{n}\right)\right] = \exp\left(\mbeq\left[z_{n}\right]+\frac{1}{2}\left(\mbeq\left[z_{n}^{2}\right]-\mbeq\left[z_{n}\right]^{2}\right)\right).
+\]
+\end_inset
+
+We can now write the variational distribution in terms of the following mean parameters: 
+\begin_inset Formula \[
+  m = \left(\mbeq\left[\beta\right],\mbeq\left[\beta^{2}\right],\mbeq\left[\tau\right],\mbeq\left[\log\tau\right],\mbeq\left[z_{1}\right],\mbeq\left[z_{1}^{2}\right],...,\mbeq\left[z_{N}\right],\mbeq\left[z_{N}^{2}\right]\right)^{T}.
+\]
+\end_inset
+
+Calculating the LRVB covariance consists of roughly four steps:
+\end_layout
+
+\begin_layout Enumerate
+finding the MFVB optimum 
+\begin_inset Formula $q^{*}$
+\end_inset
+
+, 
+\end_layout
+
+\begin_layout Enumerate
+computing the covariance 
+\begin_inset Formula $\vbcov$
+\end_inset
+
+ of 
+\begin_inset Formula $q^*$
+\end_inset
+
+, 
+\end_layout
+
+\begin_layout Enumerate
+computing 
+\begin_inset Formula $H$
+\end_inset
+
+, the Hessian of 
+\begin_inset Formula $L(m)$
+\end_inset
+
+, for 
+\begin_inset Formula $q^*$
+\end_inset
+
+, and 
+\end_layout
+
+\begin_layout Enumerate
+computing the matrix inverse and solving 
+\begin_inset Formula $\left(I-VH\right)^{-1}V$
+\end_inset
+
+. 
+\end_layout
+
+\begin_layout Standard
+For step (1), the LRVB correction is agnostic as to how the optimum is found. In our experiments below, we follow a standard coordinate ascent procedure for MFVB 
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "bishop:2006:pattern"
+
+\end_inset
+
+. We analytically update 
+\begin_inset Formula $q\left(\beta\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $q\left(\tau\right)$
+\end_inset
+
+. Given 
+\begin_inset Formula $q\left(\beta\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $q\left(\tau\right)$
+\end_inset
+
+, finding the optimal 
+\begin_inset Formula $q\left(z\right)$
+\end_inset
+
+ becomes 
+\begin_inset Formula $N$
+\end_inset
+
+ separate two-dimensional optimization problems; there is one dimension for each of the mean parameters 
+\begin_inset Formula $\mbeq \left[ z_n \right]$
+\end_inset
+
+ and 
+\begin_inset Formula $\mbeq \left[ z_n^2 \right]$
+\end_inset
+
+. In our examples, we solved these problems sequentially using IPOPT 
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "ipopt:package"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+To compute 
+\begin_inset Formula $\vbcov$
+\end_inset
+
+ for step (2), we note that by the mean-field assumption, 
+\begin_inset Formula $\beta$
+\end_inset
+
+, 
+\begin_inset Formula $\tau$
+\end_inset
+
+, and 
+\begin_inset Formula $z_{n}$
+\end_inset
+
+ are independent, so 
+\begin_inset Formula $\vbcov$
+\end_inset
+
+ is block diagonal. Since we have chosen convenient variational distributions, the mean parameters have known covariance matrices. For example, from standard properties of the normal distribution, 
+\begin_inset Formula $\textrm{Cov}\left(\beta,\beta^{2}\right)=2\mbeq\left[\beta\right]$
+\end_inset
+
+
+\begin_inset Formula $\left(\mbeq\left[\beta^{2}\right]-\mbeq\left[\beta\right]^{2}\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+For step (3), the mean parameters for 
+\begin_inset Formula $\beta$
+\end_inset
+
+ and 
+\begin_inset Formula $\tau$
+\end_inset
+
+ co-occur with each other and with all the 
+\begin_inset Formula $z_{n}$
+\end_inset
+
+, so these four rows of 
+\begin_inset Formula $H$
+\end_inset
+
+ are expected to be dense. However, the mean parameters for 
+\begin_inset Formula $z_{n}$
+\end_inset
+
+ never occur with each other, so the bulk of 
+\begin_inset Formula $H$
+\end_inset
+
+—the 
+\begin_inset Formula $2N\times2N$
+\end_inset
+
+ block corresponding to the mean parameters of 
+\begin_inset Formula $z$
+\end_inset
+
+—will be block diagonal (
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+fig
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+Hsparse
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+). The Hessian of 
+\begin_inset Formula $L\left(m\right)$
+\end_inset
+
+ can be calculated analytically, but we used the autodifferentiation software 
+\family typewriter
+JuMP
+\family default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "JuMP:LubinDunningIJOC"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Finally, for step (4), we use the technique in 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+mysec
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+scalingformulas
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ to exploit the sparsity of 
+\begin_inset Formula $\vbcov$
+\end_inset
+
+ and 
+\begin_inset Formula $H$
+\end_inset
+
+ (
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+fig
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+IVHsparse
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+) in calculating 
+\begin_inset Formula $(I-VH)^{-1}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset Float figure
+placement ht!
+wide false
+sideways false
+status open
+
+
+\begin_layout Standard
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+centering
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+begin{subfigure}
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+0.3
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+linewidth
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+centering
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Graphics 
+	filename static_images/cov_modified.png
+	height 30line%
+
+\end_inset
+
+ 
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:V_sparse"
+
+\end_inset
+
+ MFVB covariance 
+\begin_inset Formula $V$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+end{subfigure}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+begin{subfigure}
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+0.3
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+linewidth
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+centering
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Graphics 
+	filename static_images/hessian_modified.png
+	height 30line%
+
+\end_inset
+
+ 
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:H_sparse"
+
+\end_inset
+
+ Hessian matrix 
+\begin_inset Formula $H$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+end{subfigure}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+begin{subfigure}
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+0.3
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+linewidth
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+centering
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Graphics 
+	filename static_images/lrvb_modified.png
+	height 30line%
+
+\end_inset
+
+ 
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:IVH_sparse"
+
+\end_inset
+
+ 
+\begin_inset Box Frameless
+position "c"
+hor_pos "c"
+has_inner_box 1
+inner_pos "c"
+use_parbox 0
+use_makebox 1
+width ""
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+
+\begin_layout Standard
+
+\begin_inset Formula $(I - VH)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+end{subfigure}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Sparsity patterns for 
+\begin_inset Formula $\hat\truecov = (I - VH)^{-1}$
+\end_inset
+
+ using the model in 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+eq
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+pnmodel
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+, 
+\begin_inset Formula $n = 5$
+\end_inset
+
+ (white = 0)
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:sparsity_patterns"
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%======================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Random effects model details
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset CommandInset label
+LatexCommand label
+name "app:re_details"
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%======================
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+As introduced in 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+mysec
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+randomeffectsmodel
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+, our model is: 
+\begin_inset Formula \begin{eqnarray*}
+y_{n}\vert\beta,z,\tau & \indep & \gauss\left(\beta^{T}x_{n}+r_{n}z_{k\left(n\right)},\tau^{-1}\right)\\
+z_{k}\vert\nu & \iid & \gauss\left(0,\nu^{-1}\right)
+\end{eqnarray*}
+\end_inset
+
+With the priors: 
+\begin_inset Formula \begin{eqnarray*}
+\beta & \sim & \gauss\left(0,\Sigma_{\beta}\right)\\
+\nu & \sim & \Gamma\left(\alpha_{\nu},\beta_{\nu}\right)\\
+\tau & \sim & \Gamma\left(\alpha_{\tau},\beta_{\tau}\right)
+\end{eqnarray*}
+\end_inset
+
+We will make the following mean field assumption: 
+\begin_inset Formula \begin{eqnarray*}
+q\left(\beta,z,\tau,\nu\right) & = & q\left(\nu\right)q\left(\tau\right)q\left(\beta\right)\prod_{k=1}^{K}q\left(z_{k}\right)
+\end{eqnarray*}
+\end_inset
+
+We have 
+\begin_inset Formula $n\in\left\{ 1,...,N\right\} $
+\end_inset
+
+, and 
+\begin_inset Formula $k\in\left\{ 1,...,K\right\} $
+\end_inset
+
+, and 
+\begin_inset Formula $k\left(n\right)$
+\end_inset
+
+ matches an observation 
+\begin_inset Formula $n$
+\end_inset
+
+ to a random effect 
+\begin_inset Formula $k$
+\end_inset
+
+, allowing repeated observations of a random effect. The full joint log likelihood is: 
+\begin_inset Formula \begin{eqnarray*}
+\log p\left(y_{n}\vert z_{k\left(n\right)},\tau,\beta\right) & = & -\frac{\tau}{2}\left(y_{n}-\beta^{T}x_{n}-r_{n}z_{k\left(n\right)}\right)^{2}+\frac{1}{2}\log\tau+\constant\\
+\log p\left(z_{k}\vert\nu\right) & = & -\frac{\nu}{2}z_{k}^{2}+\frac{1}{2}\log\nu+\constant\\
+\log p\left(\beta\right) &  & -\frac{1}{2}\textrm{trace}\left(\Sigma_{\beta}^{-1}\beta\beta^{T}\right)+\constant\\
+\log p\left(\tau\right) & = & \left(\alpha_{\tau}-1\right)\log\tau-\beta_{\tau}\tau+\constant\\
+\log p\left(\nu\right) & = & \left(\alpha_{\nu}-1\right)\log\nu-\beta_{\nu}\nu+\constant\\
+\log p\left(y,\tau,\beta,z\right) & = & \sum_{n=1}^{N}\log p\left(y_{n}\vert z_{k\left(n\right)},\tau,\beta\right)+\sum_{k=1}^{K}\log p\left(z_{k}\vert\nu\right)+\\
+ &  & \log p\left(\beta\right)+\log p\left(\nu\right)+\log p\left(\tau\right)
+\end{eqnarray*}
+\end_inset
+
+Expanding the first term of the conditional likelihood of 
+\begin_inset Formula $y_{n}$
+\end_inset
+
+ gives 
+\begin_inset Formula \begin{eqnarray*}
+\lefteqn{-\frac{\tau}{2}\left(y_{n}-\beta^{T}x_{n}-r_{n}z_{k\left(n\right)}\right)^{2}}\\
+& = & -\frac{\tau}{2}\left(y_{n}^{2}-2y_{n}x_{n}^{T}\beta-2y_{n}r_{n}z_{n\left(k\right)}+\textrm{trace}\left(x_{n}x_{n}^{T}\beta\beta^{T}\right)+r_{n}^{2}z_{k\left(n\right)}^{2}+2r_{n}x_{n}^{T}\beta z_{k\left(n\right)}\right)
+\end{eqnarray*}
+\end_inset
+
+By grouping terms, we can see that the mean parameters will be 
+\begin_inset Formula \begin{eqnarray*}
+q\left(\beta\right) & = & q\left(\beta;\mbeq\left[\beta\right],\mbeq\left[\beta\beta^{T}\right]\right)\\
+q\left(z_{k}\right) & = & q\left(z_{k};\mbeq\left[z_{k}\right],\mbeq\left[z_{k}^{2}\right]\right)\\
+q\left(\tau\right) & = & q\left(\tau;\mbeq\left[\tau\right],\mbeq\left[\log\tau\right]\right)\\
+q\left(\nu\right) & = & q\left(\nu;\mbeq\left[\nu\right],\mbeq\left[\log\nu\right]\right)
+\end{eqnarray*}
+\end_inset
+
+It follows that the optimal variational distributions are 
+\begin_inset Formula $q\left(\beta\right)=$
+\end_inset
+
+multivariate normal, 
+\begin_inset Formula $q\left(z_{k}\right)=$
+\end_inset
+
+univariate normal, and 
+\begin_inset Formula $q\left(\tau\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $q\left(\nu\right)$
+\end_inset
+
+ will be gamma. We performed standard coordinate ascent on these distributions 
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "bishop:2006:pattern"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+As in 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+mysec
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+normalpoissonmodel
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+, we implemented this model in the autodifferentiation software JuMP 
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "JuMP:LubinDunningIJOC"
+
+\end_inset
+
+. This means conjugate coordinate updates were easy, since the natural parameters corresponding to a mean parameters are the first derivatives of the log likelihood with respect to the mean parameters. For example, denoting the log likelihood at step 
+\begin_inset Formula $s$
+\end_inset
+
+ by 
+\begin_inset Formula $L_{s}$
+\end_inset
+
+, the update for 
+\begin_inset Formula $q_{s+1}\left(z_{k}\right)$
+\end_inset
+
+ will be: 
+\begin_inset Formula \begin{eqnarray*}
+\log q_{s+1}\left(z_{k}\right) & = & \frac{\partial\mbeq\left[L_{s}\right]}{\partial\mbeq\left[z_{k}\right]}z_{k}+\frac{\partial\mbeq\left[L_{s}\right]}{\partial\mbeq\left[z_{k}^{2}\right]}z_{k}^{2}+\constant
+\end{eqnarray*}
+\end_inset
+
+Given the partial derivatives of 
+\begin_inset Formula $L_{s}$
+\end_inset
+
+ with respect to the mean parameters, the updated mean parameters for 
+\begin_inset Formula $z_{k}$
+\end_inset
+
+ can be read off directly using standard properties of the normal distribution.
+\end_layout
+
+\begin_layout Standard
+The variational covariance matrices are all standard. We can see that 
+\begin_inset Formula $H$
+\end_inset
+
+ will have nonzero terms in general (for example, the three-way interaction 
+\begin_inset Formula $\mbeq\left[\tau\right]\mbeq\left[z_{k\left(n\right)}\right]\mbeq\left[\beta\right]$
+\end_inset
+
+), and that LRVB will be different from MFVB. As usual in our models, 
+\begin_inset Formula $H$
+\end_inset
+
+ is sparse, and we can easily apply the technique in section 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+mysec
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+scalingformulas
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ to get the covariance matrix excluding the random effects, 
+\begin_inset Formula $z$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%======================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Multivariate normal mixture details
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset CommandInset label
+LatexCommand label
+name "app:mvn_details"
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%======================
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In this section we derive the basic formulas needed to calculate 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+eq
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+speclrvb
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ for a finite mixture of normals, which is the model used in 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+mysec
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+experiments
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+. We will follow the notation introduced in 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+mysec
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+normalmixturemodel
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Let each observation, 
+\begin_inset Formula $x_{n}$
+\end_inset
+
+, be a 
+\begin_inset Formula $P\times1$
+\end_inset
+
+ vector. We will denote the 
+\begin_inset Formula $P$
+\end_inset
+
+th component of the 
+\begin_inset Formula $n$
+\end_inset
+
+th observation 
+\begin_inset Formula $x_{n}$
+\end_inset
+
+, with a similar pattern for 
+\begin_inset Formula $z$
+\end_inset
+
+ and 
+\begin_inset Formula $\mu$
+\end_inset
+
+. We will denote the 
+\begin_inset Formula $p$
+\end_inset
+
+, 
+\begin_inset Formula $q$
+\end_inset
+
+th entry in the matrix 
+\begin_inset Formula $\Lambda_{k}$
+\end_inset
+
+ as 
+\begin_inset Formula $\Lambda_{k,pq}$
+\end_inset
+
+. The data generating process is as follows: 
+\begin_inset Formula \begin{eqnarray*}
+P\left(x | \mu, \pi, \Lambda \right) &=&
+  \prod_{n=1}^N P\left(x_{n}|z_{n},\mu,\Lambda \right)
+  \prod_{k=1}^{K} P\left(z_{nk}|\pi_{k} \right)\\
+\log P\left(x_{n}|z_{n},\mu,\Lambda\right) & = &
+    \sum_{n=1}^{N}z_{nk}\log\phi_{k}(x_{n}) + \constant\\
+\log\phi_{k}(x) & = & -\frac{1}{2}\left(x - \mu_{k}\right)^{T} \Lambda_{k}\left(x-\mu_{k}\right) +
+    \frac{1}{2}\log\left|\Lambda_{k}\right|+ \constant\\
+\log P(z_{nk}|\pi_{k}) & = & \sum_{k=1}^{K}z_{nk}\log\pi_{k} + \constant
+\end{eqnarray*}
+\end_inset
+
+It follows that the log posterior is given by 
+\begin_inset Formula \begin{eqnarray*}
+\log P(z,\mu,\pi,\Lambda | x) & = & \sum_{n=1}^{N}\sum_{k=1}^{K}z_{nk}\left(\log\pi_{k}-\frac{1}{2}\left(x_{n}-\mu_{k}\right)^{T}\Lambda_{k}\left(x_{n}-\mu_{k}\right)+\frac{1}{2}\log\left|\Lambda_{k}\right|\right) + \\
+  &  & \sum_{k=1}^{K} \log p(\mu_{k}) + \sum_{k=1}^{K} \log p(\Lambda_{k}) +
+        \log p(\pi) + \constant
+\end{eqnarray*}
+\end_inset
+
+We used a multivariate normal prior for 
+\begin_inset Formula $\mu_{k}$
+\end_inset
+
+, a Wishart prior for 
+\begin_inset Formula $\Lambda_{k}$
+\end_inset
+
+, and a Dirichlet prior for 
+\begin_inset Formula $\pi$
+\end_inset
+
+. In the simulations described in 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+mysec
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+normalmixturemodel
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+, we used the following prior parameters for the VB model: 
+\begin_inset Formula \begin{eqnarray*}
+  p(\mu_{k}) &=& \mathcal{N}\left(0_P, \textrm{diag}_P(0.01)^{-1}\right) \\
+  p(\Lambda_{k}) &=& \textrm{Wishart}(\textrm{diag}_P(0.01), 1)\\
+  p(\pi) &=& \textrm{Dirichlet}(5_K)
+\end{eqnarray*}
+\end_inset
+
+Here, 
+\begin_inset Formula $\textrm{diag}_P(a)$
+\end_inset
+
+ is a 
+\begin_inset Formula $P$
+\end_inset
+
+-dimensional diagonal matrix with 
+\begin_inset Formula $a$
+\end_inset
+
+ on the diagonal, and 
+\begin_inset Formula $0_P$
+\end_inset
+
+ is a length 
+\begin_inset Formula $P$
+\end_inset
+
+ vector of the value 
+\begin_inset Formula $0$
+\end_inset
+
+, with a similar definition for 
+\begin_inset Formula $5_K$
+\end_inset
+
+. Unfortunately, the function we used for the MCMC calculations, 
+\family typewriter
+rnmixGibbs
+\family default
+ in the package 
+\family typewriter
+bayesm
+\family default
+, uses a different form for the 
+\begin_inset Formula $\mu_{k}$
+\end_inset
+
+ prior. Specifically, 
+\family typewriter
+rnmixGibbs
+\family default
+ uses the prior 
+\begin_inset Formula \[
+  p_{MCMC}\left(\mu_{k} \right \vert \Lambda_{k}) =
+    \mathcal{N}(0, a^{-1} \Lambda_{k}^{-1})
+\]
+\end_inset
+
+where 
+\begin_inset Formula $a$
+\end_inset
+
+ is a scalar. There is no way to exactly match 
+\begin_inset Formula $p_{MCMC}(\mu_k)$
+\end_inset
+
+ to 
+\begin_inset Formula $p(\mu_k)$
+\end_inset
+
+, so we simply set 
+\begin_inset Formula $a=0.01$
+\end_inset
+
+. Since our datasets are all reasonably large, the prior was dominated by the likelihood, and we found the results extremely insensitive to the prior on 
+\begin_inset Formula $\mu_{k}$
+\end_inset
+
+, so this discrepancy is of no practical importance.
+\end_layout
+
+\begin_layout Standard
+The parameters 
+\begin_inset Formula $\mu_{k}$
+\end_inset
+
+, 
+\begin_inset Formula $\Lambda_{k}$
+\end_inset
+
+, 
+\begin_inset Formula $\pi$
+\end_inset
+
+, and 
+\begin_inset Formula $z_{n}$
+\end_inset
+
+ will each be given their own variational distribution. For 
+\begin_inset Formula $q_{\mu_k}$
+\end_inset
+
+ we will use a multivariate normal distribution; for 
+\begin_inset Formula $q_{\Lambda_{k}}$
+\end_inset
+
+ we will us a Wishart distirbution; for 
+\begin_inset Formula $q_{\pi}$
+\end_inset
+
+ we will use a Dirichlet distribution; for 
+\begin_inset Formula $q_{z_{n}}$
+\end_inset
+
+ we will use a Multinoulli (a single multinomial draw). These are all the optimal variational choices given the mean field assumption and the conditional conjugacy in the model.
+\end_layout
+
+\begin_layout Standard
+The sufficient statistics for 
+\begin_inset Formula $\mu_{k}$
+\end_inset
+
+ are all terms of the form 
+\begin_inset Formula $\mu_{kp}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mu_{kp}\mu_{kq}$
+\end_inset
+
+. Consequently, the sub-vector of 
+\begin_inset Formula $\theta$
+\end_inset
+
+ corresponding to 
+\begin_inset Formula $\mu_{k}$
+\end_inset
+
+ is 
+\begin_inset Formula \begin{eqnarray*}
+\theta_{\mu_{k}} & = & \left(\begin{array}{c}
+\mu_{k1}\\
+\vdots\\
+\mu_{kp}\\
+\mu_{k1}\mu_{k1}\\
+\mu_{k1}\mu_{k2}\\
+\vdots\\
+\mu_{kP}\mu_{kP}
+\end{array}\right)
+\end{eqnarray*}
+\end_inset
+
+We will only save one copy of 
+\begin_inset Formula $\mu_{kp}\mu_{kq}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mu_{kq}\mu_{kp}$
+\end_inset
+
+, so 
+\begin_inset Formula $\theta_{\mu_{k}}$
+\end_inset
+
+ has length 
+\begin_inset Formula $P+\frac{1}{2}\left(P+1\right)P$
+\end_inset
+
+. For all the parameters, we denote the complete stacked vector without a 
+\begin_inset Formula $k$
+\end_inset
+
+ subscript: 
+\begin_inset Formula \begin{eqnarray*}
+\theta_{\mu} & = & \left(\begin{array}{c}
+\theta_{\mu_{1}}\\
+\vdots\\
+\theta_{\mu_{K}}
+\end{array}\right)
+\end{eqnarray*}
+\end_inset
+
+The sufficient statistics for 
+\begin_inset Formula $\Lambda_{k}$
+\end_inset
+
+ are all the terms 
+\begin_inset Formula $\Lambda_{k,pq}$
+\end_inset
+
+ and the term 
+\begin_inset Formula $\log\left|\Lambda_{k}\right|$
+\end_inset
+
+. Again, since 
+\begin_inset Formula $\Lambda$
+\end_inset
+
+ is symmetric, we do not keep redundant terms, so 
+\begin_inset Formula $\theta_{\Lambda_{k}}$
+\end_inset
+
+ has length 
+\begin_inset Formula $1+\frac{1}{2}\left(P+1\right)P$
+\end_inset
+
+. The sufficient statistic for 
+\begin_inset Formula $\pi$
+\end_inset
+
+ is the 
+\begin_inset Formula $K$
+\end_inset
+
+-vector 
+\begin_inset Formula $\left(\log\pi_{1},...,\log\pi_{K}\right)$
+\end_inset
+
+. The sufficient statistics for 
+\begin_inset Formula $z$
+\end_inset
+
+ are simply the 
+\begin_inset Formula $N\times K$
+\end_inset
+
+ values 
+\begin_inset Formula $z_{nk}$
+\end_inset
+
+ themselves.
+\end_layout
+
+\begin_layout Standard
+In terms of 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+mysec
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+scalingformulas
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+, we have 
+\begin_inset Formula \begin{eqnarray*}
+\alpha & = & \left(\begin{array}{c}
+\theta_{\mu}\\
+\theta_{\Lambda}\\
+\theta_{\pi}
+\end{array}\right)\\
+z & = & \left(\begin{array}{c}
+\theta_{z}\end{array}\right)
+\end{eqnarray*}
+\end_inset
+
+That is, we are primarily interested in the covariance of the sufficient statistics of 
+\begin_inset Formula $\mu$
+\end_inset
+
+, 
+\begin_inset Formula $\Lambda$
+\end_inset
+
+, and 
+\begin_inset Formula $\pi$
+\end_inset
+
+. The latent variables 
+\begin_inset Formula $z$
+\end_inset
+
+ are nuisance parameters.
+\end_layout
+
+\begin_layout Standard
+To put the log likelihood in terms useful for LRVB, we must express it in terms of the sufficient statistics, taking into account the fact the 
+\begin_inset Formula $\theta$
+\end_inset
+
+ vector does not store redundant terms (e.g. it will only keep 
+\begin_inset Formula $\Lambda_{ab}$
+\end_inset
+
+ for 
+\begin_inset Formula $a<b$
+\end_inset
+
+ since 
+\begin_inset Formula $\Lambda$
+\end_inset
+
+ is symmetric). 
+\begin_inset Formula \begin{eqnarray*}
+  \lefteqn{-\frac{1}{2}\left(x_{n}-\mu_{k}\right)^{T}\Lambda_{k}\left(x_{n}-\mu_{k}\right)} \\
+ & = & -\frac{1}{2}\textrm{trace}\left(\Lambda_{k}\left(x_{n}-\mu_{k}\right)\left(x_{n}-\mu_{k}\right)^{T}\right)\\
+ & = & -\frac{1}{2}\sum_{a}\sum_{b}\left(\Lambda_{k,ab}\left(x_{n,a}-\mu_{k,a}\right)\left(x_{n,b}-\mu_{k,b}\right)\right)\\
+ & = & -\frac{1}{2}\sum_{a}\sum_{b}\left(\Lambda_{k,ab}\mu_{k,a}\mu_{k,b}-\Lambda_{k,ab}x_{n,a}\mu_{k,b}-
+          \Lambda_{k,ab}x_{n,b}\mu_{k,a}+\Lambda_{k,ab}x_{n,a}x_{n,b}\right)\\
+ & = & -\frac{1}{2}\sum_{a}\Lambda_{k,aa}\left(\mu_{k}^{2}\right)^{a}+\sum_{a}\Lambda_{k,aa}x_{n,a}\mu_{k,a}-\frac{1}{2}\sum_{a}\Lambda_{k,aa}\left(x_{n}^{2}\right)^{2}-\\
+ &  & \frac{1}{2}\sum_{a\ne b}\Lambda_{k,ab}\mu_{k,a}\mu_{k,b}+\sum_{a\ne b}\Lambda_{k,ab}x_{n,a}\mu_{k,b}-\frac{1}{2}\sum_{a\ne b}\Lambda_{k,ab}x_{n,a}x_{n,b}\\
+ & = & -\frac{1}{2}\sum_{a}\Lambda_{k,aa}\left(\mu_{k}^{2}\right)^{a}+\sum_{a}\Lambda_{k,aa}x_{n,a}\mu_{k,a}-\frac{1}{2}\sum_{a}\Lambda_{k,aa}\left(x_{n}^{2}\right)^{2}-\\
+ &  & \sum_{a<b}\Lambda_{k,ab}\mu_{k,a}\mu_{k,b}+\sum_{a<b}\Lambda_{k,ab}\left(x_{n,a}\mu_{k,b}+x_{n,b}\mu_{k,a}\right)-\sum_{a<b}\Lambda_{k,ab}x_{n,a}x_{n,b}
+\end{eqnarray*}
+\end_inset
+
+The MFVB updates and covariances in 
+\begin_inset Formula $V$
+\end_inset
+
+ are all given by properties of standard distributions. To compute the LRVB corrections, it only remains to calculate the Hessian, 
+\begin_inset Formula $H$
+\end_inset
+
+. These terms can be read directly off the posterior. First we calculate derivatives with respect to components of 
+\begin_inset Formula $\mu$
+\end_inset
+
+. 
+\begin_inset Formula \begin{eqnarray*}
+\frac{\partial^{2}H}{\partial\mu_{k,a}\partial\Lambda_{k,ab}} & = & \sum_{i}z_{nk}x_{n,b}\\
+\frac{\partial^{2}H}{\partial\left(\mu_{k,a}\mu_{k,b}\right)\partial\Lambda_{k,ab}} & = & -\left(\frac{1}{2}\right)^{1(a=b)}\sum_{n}z_{nk}\\
+\frac{\partial^{2}H}{\partial\mu_{k,a}\partial z_{nk}} & = & \sum_{b}\Lambda_{k,ab}x_{n,b}\\
+\frac{\partial^{2}H}{\partial\left(\mu_{k,a}\mu_{k,b}\right)\partial z_{nk}} & = & -\left(\frac{1}{2}\right)^{1(a=b)}\Lambda_{k,ab}
+\end{eqnarray*}
+\end_inset
+
+All other 
+\begin_inset Formula $\mu$
+\end_inset
+
+ derivatives are zero. For 
+\begin_inset Formula $\Lambda$
+\end_inset
+
+, 
+\begin_inset Formula \begin{eqnarray*}
+\frac{\partial^{2}H}{\partial\Lambda_{k,ab}\partial z_{nk}} & = & -\left(\frac{1}{2}\right)^{1(a=b)}\left(x_{n,a}x_{n,b}-\mu_{k,a}x_{n,b}-\mu_{k,b}x_{n,a}+\mu_{k,a}\mu_{k,b}\right)\\
+\frac{\partial^{2}H}{\partial\log\left|\Lambda_{k}\right|\partial z_{nk}} & = & \frac{1}{2}
+\end{eqnarray*}
+\end_inset
+
+The remaining 
+\begin_inset Formula $\Lambda$
+\end_inset
+
+ derivatives are zero. The only nonzero second derivatives for 
+\begin_inset Formula $\log\pi$
+\end_inset
+
+ are to 
+\begin_inset Formula $Z$
+\end_inset
+
+ and are given by 
+\begin_inset Formula \begin{eqnarray*}
+\frac{\partial^{2}H}{\partial\log\pi_{k}\partial z_{nk}} & = & 1
+\end{eqnarray*}
+\end_inset
+
+Note in particular that 
+\begin_inset Formula $H_{zz} = 0$
+\end_inset
+
+, allowing efficient calculation of 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+eq
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+nuisancelrvbest
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%======================
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+MNIST details
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset CommandInset label
+LatexCommand label
+name "app:mnist_details"
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+%======================
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For a real-world example, we applied LRVB to the unsupervised classification of two digits from the MNIST dataset of handwritten digits. We first preprocess the MNIST dataset by performing principle component analysis on the training data's centered pixel intensities and keeping the top 
+\begin_inset Formula $\MNISTp$
+\end_inset
+
+ components. For evaluation, the test data is projected onto the same 
+\begin_inset Formula $\MNISTp$
+\end_inset
+
+-dimensional subspace found using the training data.
+\end_layout
+
+\begin_layout Standard
+We then treat the problem of separating handwritten 
+\begin_inset Formula $0$
+\end_inset
+
+s from 
+\begin_inset Formula $1$
+\end_inset
+
+s as an unsupervised clustering problem. We limit the dataset to instances labeled as 
+\begin_inset Formula $0$
+\end_inset
+
+ or 
+\begin_inset Formula $1$
+\end_inset
+
+, resulting in 
+\begin_inset Formula $\MNISTn$
+\end_inset
+
+ training and 
+\begin_inset Formula $\MNISTTestN$
+\end_inset
+
+ test points. We fit the training data as a mixture of multivariate Gaussians. Here, 
+\begin_inset Formula $K=2$
+\end_inset
+
+, 
+\begin_inset Formula $P=\MNISTp$
+\end_inset
+
+, and 
+\begin_inset Formula $N=\MNISTn$
+\end_inset
+
+. Then, keeping the 
+\begin_inset Formula $\mu$
+\end_inset
+
+, 
+\begin_inset Formula $\Lambda$
+\end_inset
+
+, and 
+\begin_inset Formula $\pi$
+\end_inset
+
+ parameters fixed, we calculate the expectations of the latent variables 
+\begin_inset Formula $z$
+\end_inset
+
+ in 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+eq
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{
+\end_layout
+
+\end_inset
+
+normalmixturemodel
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+}
+\end_layout
+
+\end_inset
+
+ for the test set. We assign test set data point 
+\begin_inset Formula $x_n$
+\end_inset
+
+ to whichever component has maximum a posteriori expectation. We count successful classifications as test set points that match their cluster's majority label and errors as test set points that are different from their cluster's majority label. By this measure, our test set error rate was 
+\begin_inset Formula $\MNISTTestError$
+\end_inset
+
+. We stress that we intend only to demonstrate the feasibility of LRVB on a large, real-world dataset rather than to propose practical methods for modeling MNIST.
+\end_layout
+
+\end_body
+\end_document
